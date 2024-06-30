@@ -1,45 +1,83 @@
-import React, {ComponentProps, useState} from 'react'
+import React, {ComponentProps, useRef, useState} from 'react'
 import LeftBracket from './LeftBracket'
 import RightBracket from './RightBracket'
-import { Node } from './data_structure/Stack'
 import StackItem from './StackItem'
+
+type StackItemType = {val:string | number, className:string}
 
 interface StackContainerProps extends ComponentProps<'div'>{
 
 }
 
 const StackContainer:React.FC<StackContainerProps> = ({children, ...props}) => {
-  const [stack, setStack] = useState<(string | number)[]>(['test'])
+  const [stack, setStack] = useState<(StackItemType)[]>([])
+  const [lastPoppedItem, setLastPoppedItem] = useState<StackItemType | undefined>(undefined)
+  const [peakState, setPeakState] = useState<boolean>(true)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const StackContainerRef = useRef<HTMLDivElement>(null)
 
   function push(item:string | number){
     setStack(prev => {
-        prev.push(item);
+        if (prev.length !== 0){
+          prev[prev.length - 1].className = '';
+          StackContainerRef.current!.children[StackContainerRef.current!.children.length - 2].innerHTML = `item ${prev.length}`
+        };
+        prev.push({val:item, className:'last-stack-item'});
+        setPeakState(true);
         return [...prev]
     });
   };
 
   function pop(){
+    let temp;
     setStack(prev => {
-        prev.pop();
+        temp = prev.pop();
+        if (prev.length !== 0){
+          prev[prev.length - 1].className = 'last-stack-item';
+        };
+        setLastPoppedItem(temp);
+        setPeakState(true);
         return [...prev]
     });
+  };
+
+  function peak(state:boolean){
+    if(!StackContainerRef.current){
+      return
+    };
+
+    if(state){
+      StackContainerRef.current.children[StackContainerRef.current.children.length - 2].innerHTML = stack[stack.length - 1].val.toString();
+    }else{
+      StackContainerRef.current.children[StackContainerRef.current.children.length - 2].innerHTML = `item ${stack.length}`
+    };
+    setPeakState(prev => !prev);
   }
 
   return (
     <section {...props}>
-        <div style={{display:'flex', gap:'1rem', alignItems:'center', backgroundColor:'red'}}>
+        <div ref={StackContainerRef} style={{display:'flex', gap:'1rem', alignItems:'center', justifyContent:'flex-start'}}>
             <LeftBracket/>
                 {stack.map((item, index) => {
-                    return <StackItem key={`${index}-${item}-stack-item`} val={item}/>
+                    return <StackItem className={item.className} onClick={item.className === 'last-stack-item' ? pop:() => {}}
+                    style={{cursor:'pointer'}} key={`${index}-${item}-stack-item`} val={`item ${index + 1}`}/>
                 })}
-            <RightBracket style={{justifySelf:'right'}}/>
+
+            <RightBracket/>
         </div>
-        <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+        <div style={{display:'flex', alignItems:'start', justifyContent:'space-between'}}>
             <div style={{display:'flex', flexDirection:'column', gap:'2rem'}}>
-                <button>push</button>
-                <input type="text" />
+                <button onClick={() => push(inputRef.current?.value!)}>push</button>
+                <input type="text" ref={inputRef}/>
             </div>
-            <button>pop</button>
+            <div style={{display:'flex', flexDirection:'column'}}>
+              <button onClick={() => peak(peakState)}>{peakState ? 'peak': 'unpeak'}</button>
+              <p>{stack.length === 0 ? 'stack is empty':`stack has ${stack.length} items`}</p>
+            </div>
+            <div>
+              <p>last popped item</p>
+              <p>{lastPoppedItem?.val}</p>
+            </div>
         </div>
     </section>
   )
