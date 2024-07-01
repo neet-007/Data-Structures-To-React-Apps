@@ -1,9 +1,10 @@
 import './App.css'
+import QueueContainer from './QueueContainer'
 
 function App() {
 
   return (
-    <div>dasd</div>
+    <QueueContainer/>
   )
 }
 

@@ -60,15 +60,3 @@ function resize(){
     start = 0
     end = i;
 };
-
-add(2);
-add(3);
-add(1);
-console.log('first');
-console.log(peak());
-console.log('first')
-console.log(pop());
-console.log('second');
-console.log(pop());
-console.log('third');
-console.log(pop());
