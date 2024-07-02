@@ -9,20 +9,22 @@ export type NodeType = {
 }
 
 export interface NodeProps extends ComponentProps<'div'>{
-    data:NodeType;
+    index:number;
 };
 
-const Node:React.FC<NodeProps> = ({data, ...props}) => {
-  const {heap} = useTreeContext()
+const Node:React.FC<NodeProps> = ({index, ...props}) => {
+  const {heap, heapSize} = useTreeContext()
   return (
-    <div {...props}>
-        <p>{data.val}</p>
-        {data.leftChild &&
-            <Node data={heap[data.leftChild]}/>
-        }
-        {data.rightChild &&
-            <Node data={heap[data.rightChild]}/>
-        }
+    <div style={{width:'100%', display:'flex', flexDirection:'column'}} {...props}>
+        <p style={{alignSelf:'center', border:'1px solid black', borderRadius:'50%', padding:'0.75rem'}}>{heap[index].val}</p>
+        <div style={{display:'flex', justifyContent:'center'}}>
+            {(heap[index].leftChild < heapSize && heap[index].leftChild != -1) &&
+                <Node index={heap[index].leftChild}/>
+            }
+            {(heap[index].rightChild < heapSize && heap[index].rightChild != -1) &&
+                <Node index={heap[index].rightChild}/>
+            }
+        </div>
     </div>
   )
 }

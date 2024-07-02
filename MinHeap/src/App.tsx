@@ -5,7 +5,7 @@ import { TreeContextProvidor } from './TreeContext'
 function App() {
 
   return (
-    <div>
+    <div style={{width:'100%'}}>
       <TreeContextProvidor>
         <TreeContainer/>
       </TreeContextProvidor>
