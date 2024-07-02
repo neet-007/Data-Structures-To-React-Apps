@@ -14,7 +14,7 @@ const TreeContainer = () => {
       </div>
       <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
             {heap[0] &&
-              <Node index={0}/>
+              <Node index={0} complete/>
             }
       </div>
       <button onClick={() => heapPop()}>pop</button>
