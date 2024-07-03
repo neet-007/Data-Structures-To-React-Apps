@@ -1,4 +1,4 @@
-import {ComponentProps, forwardRef, useEffect, useMemo, useRef, useState} from 'react'
+import React, {ComponentProps, useEffect, useMemo, useRef, useState} from 'react'
 import { useTreeContext } from './TreeContext';
 
 export type NodeType = {
@@ -8,17 +8,21 @@ export type NodeType = {
     rightChild:number;
 };
 
+type NodeCordsSetter = {x:number, y:number, width:number, height:number};
+
 export interface NodeProps extends ComponentProps<'div'> {
     index: number;
-    complete?:boolean
+    complete?:boolean;
+    setLeftNodeRect_?:React.Dispatch<React.SetStateAction<NodeCordsSetter>>
 };
 
-const Node = forwardRef<HTMLDivElement, NodeProps>(({ index, complete, ...props }, ref) => {
+
+const Node:React.FC<NodeProps> = ({index, setLeftNodeRect_, complete, ...props}) => {
     const { heap, heapSize } = useTreeContext();
     const [windowDimintions, setWindowDimintions] = useState<{width:number, height:number}>({width:0, height:0})
+    const [leftNodeRect, setLeftNodeRect] = useState<NodeCordsSetter>({x:0, y:0, width:0, height:0})
+    const [rightNodeRect, setRightNodeRect] = useState<NodeCordsSetter>({x:0, y:0, width:0, height:0})
     const parentRef = useRef<HTMLParagraphElement>(null);
-    const leftRef = useRef<HTMLDivElement>(null);
-    const rightRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
       function updateWindowSize(){
@@ -34,6 +38,13 @@ const Node = forwardRef<HTMLDivElement, NodeProps>(({ index, complete, ...props 
       return() => window.removeEventListener('resize', updateWindowSize)
     },[])
 
+    useEffect(() => {
+      if (setLeftNodeRect_ && parentRef.current){
+        const rect = parentRef.current.getBoundingClientRect();
+        setLeftNodeRect_({x:rect.x, y:rect.y, width:rect.width, height:rect.height})
+      }
+    },[windowDimintions.width, windowDimintions.height])
+
     const parentCords = useMemo(() => {
       if (parentRef.current) {
         const rect = parentRef.current.getBoundingClientRect();
@@ -46,44 +57,31 @@ const Node = forwardRef<HTMLDivElement, NodeProps>(({ index, complete, ...props 
     }, [parentRef.current, windowDimintions.width, windowDimintions.height]);
 
     const leftCords = useMemo(() => {
-        console.log(leftRef.current)
-        if(!leftRef.current){
-           return {x:0, y:0, height:0, width:0};
-        };
-        const rect = leftRef.current.children[0].getBoundingClientRect();
-        console.log('left')
-        console.log(rect)
         const val = {
-            x:rect.x + rect.width / 2,
-            y:rect.y + rect.height / 2,
+            x:leftNodeRect.x + leftNodeRect.width / 2,
+            y:leftNodeRect.y + leftNodeRect.height / 2,
             height:0,
             width:0
         };
         val.height = Math.abs(val.y - parentCords.y);
         val.width = Math.abs(val.x - parentCords.x);
         return val
-    },[leftRef.current, windowDimintions.width, windowDimintions.height]);
+    },[{...leftNodeRect}, windowDimintions.width, windowDimintions.height]);
 
     const rightCords = useMemo(() => {
-        if(!rightRef.current){
-            return {x:0, y:0, width:0, height:0};
-        };
-        const rect = rightRef.current.children[0].getBoundingClientRect();
-        console.log('rigth')
-        console.log(rect)
         const val = {
-            x:rect.x + rect.width / 2,
-            y:rect.y + rect.height / 2,
+            x:rightNodeRect.x + rightNodeRect.width / 2,
+            y:rightNodeRect.y + rightNodeRect.height / 2,
             height:0,
             width:0
         };
         val.height = Math.abs(val.y - parentCords.y);
         val.width = Math.abs(val.x - parentCords.x);
         return val
-    },[rightRef.current, windowDimintions.width, windowDimintions.height]);
+    },[{...rightNodeRect}, windowDimintions.width, windowDimintions.height]);
 
     return (
-      <div ref={ref} style={{width:'100%', display: 'flex', flexDirection: 'column' }} {...props}>
+      <div style={{width:'100%', display: 'flex', flexDirection: 'column' }} {...props}>
         <p
           style={{
             height: '1rem',
@@ -95,7 +93,9 @@ const Node = forwardRef<HTMLDivElement, NodeProps>(({ index, complete, ...props 
             padding: '0.25rem',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            backgroundColor:'white',
+            color:'black'
           }}
           ref={parentRef}
         >
@@ -103,7 +103,7 @@ const Node = forwardRef<HTMLDivElement, NodeProps>(({ index, complete, ...props 
         </p>
         <div style={{display: 'flex', justifyContent: 'center' }}>
           {(heap[index].leftChild < heapSize && heap[index].leftChild !== -1) &&
-              <svg style={{ position: 'absolute', top:0, left:0, pointerEvents:'none' }} width={leftCords.width} height={leftCords.height}>
+              <svg style={{ position: 'absolute', top:0, left:0, pointerEvents:'none', zIndex:-1 }} width={'100%'} height={'100%'}>
                 <line
                 x1={parentCords.x}
                 y1={parentCords.y}
@@ -114,10 +114,10 @@ const Node = forwardRef<HTMLDivElement, NodeProps>(({ index, complete, ...props 
             </svg>
           }
           {(heap[index].leftChild < heapSize && heap[index].leftChild !== -1) &&
-            <Node index={heap[index].leftChild} ref={leftRef} complete={heap[index].rightChild !== -1}/>
+            <Node index={heap[index].leftChild} setLeftNodeRect_={setLeftNodeRect} complete={heap[index].rightChild !== -1 && heap[index].rightChild < heapSize}/>
           }
           {(heap[index].rightChild < heapSize && heap[index].rightChild !== -1) &&
-              <svg style={{ position: 'absolute', top:0, left:0, pointerEvents:'none' }} width={rightCords.width} height={rightCords.height}>
+              <svg style={{ position: 'absolute', top:0, left:0, pointerEvents:'none', zIndex:-1 }} width={'100%'} height={'100%'}>
                 <line
                 x1={parentCords.x}
                 y1={parentCords.y}
@@ -128,11 +128,11 @@ const Node = forwardRef<HTMLDivElement, NodeProps>(({ index, complete, ...props 
                 </svg>
           }
           {(heap[index].rightChild < heapSize && heap[index].rightChild !== -1) &&
-            <Node index={heap[index].rightChild} ref={rightRef} complete/>
+            <Node index={heap[index].rightChild} setLeftNodeRect_={setRightNodeRect} complete/>
           }
         </div>
       </div>
     );
-  });
+  };
 
 export default Node

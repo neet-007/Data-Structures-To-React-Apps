@@ -3,7 +3,7 @@ import Node from './Node'
 import { useTreeContext } from './TreeContext'
 
 const TreeContainer = () => {
-  const {heap, heapPush, heapPop, lastPoppedItem} = useTreeContext();
+  const {heap, heapSize, heapPush, heapPop, lastPoppedItem} = useTreeContext();
   console.log(heap)
   const InputRef = useRef<HTMLInputElement>(null);
   return (
@@ -13,11 +13,11 @@ const TreeContainer = () => {
         <button onClick={() => heapPush(Number(InputRef.current!.value))}>add</button>
       </div>
       <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
-            {heap[0] &&
+            {(heap[0] && heapSize > 0) &&
               <Node index={0} complete/>
             }
       </div>
-      <button onClick={() => heapPop()}>pop</button>
+      <button disabled={heapSize === 0} onClick={() => heapPop()}>pop</button>
       <div>
         <p>last popped item</p>
         <p>{lastPoppedItem?.val}</p>

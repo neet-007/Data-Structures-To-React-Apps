@@ -85,6 +85,9 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
         setHeap(prev => {
             const length = heapSize - 1;
             if (pop){
+                if(heapSize - 1 === 0){
+                    return [...prev];
+                };
                 const temp = prev[0]
                 const tempParent = prev[0].parent;
                 const tempLeft = prev[0].leftChild;
@@ -102,7 +105,6 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
             };
 
             while (index < length){
-                console.log(index)
                 let smallIndex = index;
                 const leftChild = getChild(index, 'l');
                 if (leftChild < length && prev[leftChild].val < prev[smallIndex].val){
@@ -110,30 +112,27 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
                 };
                 const rightChild = getChild(index, 'r');
                 if (rightChild < length && prev[rightChild].val < prev[smallIndex].val){
-                    smallIndex = rightChild
+                    smallIndex = rightChild;
                 };
 
                 if (smallIndex === index){
-                    console.log(index)
-                    break
+                    break;
                 };
 
-                console.log(prev[index]);
-                console.log(prev[smallIndex]);
-                const temp = prev[index];
-                const tempParent = prev[index].parent;
-                const tempLeft = prev[index].leftChild;
-                const tempRight = prev[index].rightChild;
+                const temp = prev[smallIndex];
+                const tempParent = prev[smallIndex].parent;
+                const tempLeft = prev[smallIndex].leftChild >= length ? -1 :prev[smallIndex].leftChild;
+                const tempRight = prev[smallIndex].rightChild >= length ? -1 : prev[smallIndex].rightChild;
 
-                prev[index] = prev[smallIndex];
-                prev[smallIndex] = temp;
+                prev[smallIndex] = prev[index];
+                prev[index] = temp;
 
-                prev[smallIndex].parent = prev[index].parent;
-                prev[smallIndex].leftChild = prev[index].leftChild;
-                prev[smallIndex].rightChild = prev[index].rightChild;
-                prev[index].parent = tempParent;
-                prev[index].leftChild = tempLeft;
-                prev[index].rightChild = tempRight;
+                prev[index].parent = prev[smallIndex].parent;
+                prev[index].leftChild = prev[smallIndex].leftChild >= length ? - 1 : prev[smallIndex].leftChild;
+                prev[index].rightChild = prev[smallIndex].rightChild >= length ? -1 : prev[smallIndex].rightChild;
+                prev[smallIndex].parent = tempParent;
+                prev[smallIndex].leftChild = tempLeft;
+                prev[smallIndex].rightChild = tempRight;
 
                 index = smallIndex;
 
