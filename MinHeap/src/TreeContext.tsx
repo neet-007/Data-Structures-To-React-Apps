@@ -25,7 +25,7 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
     const [lastPoppedItem, setLastPoppedItem] = useState<NodeType | undefined>(undefined);
 
     function heapPush(val:string | number){
-        heapifyUp(heap.length, {val, parent:-1, leftChild:-1, rightChild:-1});
+        heapifyUp(heapSize, {val, parent:-1, leftChild:-1, rightChild:-1});
         setHeapSize(prev => prev + 1);
     };
 
@@ -39,7 +39,11 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
     function heapifyUp(index:number, item?:NodeType){
         setHeap(prev => {
             if (item){
-                prev.push(item);
+                if(prev.length > index){
+                    prev[index] = item;
+                }else{
+                    prev.push(item);
+                };
                 prev[index].parent = getParent(index);
                 const leftChild = getChild(index, 'l');
                 const rightChild = getChild(index, 'r');
@@ -55,10 +59,8 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
             };
 
             let parentIdx = getParent(index);
-
             while (parentIdx >= 0 && prev[parentIdx].val > prev[index].val){
                 const temp = prev[parentIdx];
-
                 const tempParent = prev[parentIdx].parent;
                 const tempLeft = prev[parentIdx].leftChild;
                 const tempRight = prev[parentIdx].rightChild;
