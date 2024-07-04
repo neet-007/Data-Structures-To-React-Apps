@@ -1,4 +1,4 @@
-import React, {useState, createContext, useContext, ComponentProps} from "react";
+import React, {useState, createContext, useContext, useEffect, ComponentProps} from "react";
 import { NodeType } from "./Node";
 
 type TreeContextType = {
@@ -7,15 +7,17 @@ type TreeContextType = {
     heapPop:() => void;
     lastPoppedItem:NodeType | undefined;
     heapSize:number;
-}
+    currIndex:number;
+};
 
 const INITIAL_STATE:TreeContextType = {
     heap:[],
-    heapPush: () => {},
-    heapPop: () => {},
+    heapPush:() => {},
+    heapPop:() => {},
     lastPoppedItem:undefined,
     heapSize:0,
-}
+    currIndex:0,
+};
 
 const TreeContext = createContext<TreeContextType>(INITIAL_STATE);
 
@@ -23,125 +25,129 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
     const [heap, setHeap] = useState<NodeType[]>([])
     const [heapSize, setHeapSize] = useState<number>(0)
     const [lastPoppedItem, setLastPoppedItem] = useState<NodeType | undefined>(undefined);
+    const [isPush, setIsPush] = useState<boolean>(false);
+    const [currIndex, setCurrIndex] = useState<number>(-1);
+
+    useEffect(() => {
+        if (currIndex < 0){
+          return;
+        };
+        let interval;
+        if (!isPush){
+            interval = setInterval(() => {
+                setHeap(prev => {
+                    const length = heapSize;
+
+                    if (currIndex < length){
+                        let smallIndex = currIndex;
+                        const leftChild = getChild(currIndex, 'l');
+                        console.log(prev[leftChild])
+                        if (leftChild < length && prev[leftChild].val < prev[smallIndex].val){
+                            smallIndex = leftChild;
+                        };
+                        const rightChild = getChild(currIndex, 'r');
+                        console.log(prev[rightChild])
+                        if (rightChild < length && prev[rightChild].val < prev[smallIndex].val){
+                            smallIndex = rightChild;
+                        };
+                        console.log(length);
+                        console.log(smallIndex);
+                        console.log(currIndex);
+                        if (smallIndex === currIndex){
+                            console.log('breaaaaaak')
+                            setCurrIndex(-1);
+                            clearInterval(interval!);
+                            return [...prev];
+                        };
+
+                        const temp = prev[smallIndex];
+                        const tempParent = prev[smallIndex].parent;
+                        const tempLeft = prev[smallIndex].leftChild;
+                        const tempRight = prev[smallIndex].rightChild;
+
+                        prev[smallIndex] = prev[currIndex];
+                        prev[currIndex] = temp;
+
+                        prev[currIndex].parent = prev[smallIndex].parent;
+                        prev[currIndex].leftChild = prev[smallIndex].leftChild;
+                        prev[currIndex].rightChild = prev[smallIndex].rightChild;
+                        prev[smallIndex].parent = tempParent;
+                        prev[smallIndex].leftChild = tempLeft;
+                        prev[smallIndex].rightChild = tempRight;
+
+                        setCurrIndex(smallIndex);
+                    };
+                    setCurrIndex(-1);
+                    clearInterval(interval!);
+                    return [...prev]
+                });
+            }, 2000);
+        }
+        else{
+          interval = setInterval(() => {
+            setHeap(prev => {
+                let parentIdx = getParent(currIndex);
+
+                if (parentIdx >= 0 && prev[currIndex].val < prev[parentIdx].val){
+                    const temp = prev[parentIdx];
+
+                    prev[parentIdx] = prev[currIndex];
+                    prev[currIndex] = temp;
+
+                    const parentParent = getParent(parentIdx);
+                    const parentLeft = getChild(parentIdx, 'l');
+                    const parentRight = getChild(parentIdx, 'r');
+                    const currParent = getParent(currIndex);
+                    const currLeft = getChild(currIndex, 'l');
+                    const currRight = getChild(currIndex, 'r');
+                    prev[parentIdx].parent = parentIdx === 0 ? -1 : parentParent;
+                    prev[parentIdx].leftChild = parentLeft < prev.length ? parentLeft : -1;
+                    prev[parentIdx].rightChild = parentRight < prev.length ? parentRight : -1;
+                    prev[currIndex].parent = currParent;
+                    prev[currIndex].leftChild = currLeft < prev.length ? currLeft : -1;
+                    prev[currIndex].rightChild = currRight < prev.length ? currRight : -1;
+                    if (currIndex === 0){
+                        clearInterval(interval!);
+                        setCurrIndex(-1);
+                    }else{
+                        clearInterval(interval!);
+                        setCurrIndex(parentIdx);
+                    };
+                }
+                else{
+                    clearInterval(interval!)
+                    setCurrIndex(-1);
+                }
+                return [...prev];
+            });
+    }, 2000);
+}
+
+      return () => clearInterval(interval!);
+    },[currIndex, isPush])
 
     function heapPush(val:string | number){
-        heapifyUp(heapSize, {val, parent:-1, leftChild:-1, rightChild:-1});
-        setHeapSize(prev => prev + 1);
+      setHeap(prev => [...prev, {val, parent:-1, leftChild:-1, rightChild:-1}]);
+      setCurrIndex(heap.length);
+      setIsPush(true);
+      setHeapSize(prev => prev + 1);
     };
 
     function heapPop(){
-        const temp = heap[0];
-        heapifyDown(0, true);
-        setHeapSize(prev => prev - 1);
-        setLastPoppedItem(temp);
-    };
-
-    function heapifyUp(index:number, item?:NodeType){
-        setHeap(prev => {
-            if (item){
-                if(prev.length > index){
-                    prev[index] = item;
-                }else{
-                    prev.push(item);
-                };
-                prev[index].parent = getParent(index);
-                const leftChild = getChild(index, 'l');
-                const rightChild = getChild(index, 'r');
-                prev[index].leftChild = leftChild < heapSize + 1 ? leftChild : -1;
-                prev[index].rightChild = rightChild < heapSize + 1 ? rightChild : -1;
-                if(prev[index].parent !== -1 && prev[prev[index].parent].leftChild === -1){
-                    prev[prev[index].parent].leftChild = index;
-                }else{
-                    if(prev[index].parent !== -1){
-                        prev[prev[index].parent].rightChild = index;
-                    };
-                };
-            };
-
-            let parentIdx = getParent(index);
-            while (parentIdx >= 0 && prev[parentIdx].val > prev[index].val){
-                const temp = prev[parentIdx];
-                const tempParent = prev[parentIdx].parent;
-                const tempLeft = prev[parentIdx].leftChild;
-                const tempRight = prev[parentIdx].rightChild;
-
-                prev[parentIdx] = prev[index];
-                prev[index] = temp;
-
-                prev[index].parent = prev[parentIdx].parent;
-                prev[index].leftChild = prev[parentIdx].leftChild;
-                prev[index].rightChild = prev[parentIdx].rightChild;
-                prev[parentIdx].parent = tempParent;
-                prev[parentIdx].leftChild = tempLeft;
-                prev[parentIdx].rightChild = tempRight;
-
-                index = parentIdx;
-                parentIdx = getParent(parentIdx);
-            };
-
-            return [...prev]
-        });
-    };
-
-    function heapifyDown(index:number, pop:boolean=false){
-        setHeap(prev => {
-            const length = heapSize - 1;
-            if (pop){
-                if(heapSize - 1 === 0){
-                    return [...prev];
-                };
-                const temp = prev[0]
-                const tempParent = prev[0].parent;
-                const tempLeft = prev[0].leftChild;
-                const tempRight = prev[0].rightChild;
-
-                prev[0] = prev[heapSize - 1];
-                prev[heapSize - 1] = temp;
-
-                prev[heapSize - 1].parent = prev[0].parent;
-                prev[heapSize - 1].leftChild = prev[0].leftChild;
-                prev[heapSize - 1].rightChild = prev[0].rightChild;
-                prev[0].parent = tempParent;
-                prev[0].leftChild = tempLeft;
-                prev[0].rightChild = tempRight;
-            };
-
-            while (index < length){
-                let smallIndex = index;
-                const leftChild = getChild(index, 'l');
-                if (leftChild < length && prev[leftChild].val < prev[smallIndex].val){
-                    smallIndex = leftChild;
-                };
-                const rightChild = getChild(index, 'r');
-                if (rightChild < length && prev[rightChild].val < prev[smallIndex].val){
-                    smallIndex = rightChild;
-                };
-
-                if (smallIndex === index){
-                    break;
-                };
-
-                const temp = prev[smallIndex];
-                const tempParent = prev[smallIndex].parent;
-                const tempLeft = prev[smallIndex].leftChild >= length ? -1 :prev[smallIndex].leftChild;
-                const tempRight = prev[smallIndex].rightChild >= length ? -1 : prev[smallIndex].rightChild;
-
-                prev[smallIndex] = prev[index];
-                prev[index] = temp;
-
-                prev[index].parent = prev[smallIndex].parent;
-                prev[index].leftChild = prev[smallIndex].leftChild >= length ? - 1 : prev[smallIndex].leftChild;
-                prev[index].rightChild = prev[smallIndex].rightChild >= length ? -1 : prev[smallIndex].rightChild;
-                prev[smallIndex].parent = tempParent;
-                prev[smallIndex].leftChild = tempLeft;
-                prev[smallIndex].rightChild = tempRight;
-
-                index = smallIndex;
-
-            };
-
-            return [...prev]
-        });
+      const temp = heap[0];
+      setHeap(prev => {
+        prev[0] = prev[heapSize - 1];
+        prev[heapSize - 1] = temp;
+        prev[0].parent = -1;
+        prev[0].leftChild = prev[heapSize - 1].leftChild;
+        prev[0].rightChild = prev[heapSize - 1].rightChild;
+        prev[heapSize - 1].leftChild = prev[heapSize - 1].rightChild = prev[heapSize - 1].parent = -1;
+        return [...prev];
+      });
+      setCurrIndex(0);
+      setIsPush(false);
+      setHeapSize(prev => prev - 1);
+      setLastPoppedItem(temp);
     };
 
     function getChild(index:number, dir:'l' | 'r'){
@@ -156,8 +162,9 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
         return Math.floor(((index - 1) / 2));
     };
 
+
     return(
-        <TreeContext.Provider value={{heap, heapPush, heapPop, lastPoppedItem, heapSize}}>
+        <TreeContext.Provider value={{heap, heapPush, heapPop, currIndex, lastPoppedItem, heapSize}}>
             {children}
         </TreeContext.Provider>
     )
