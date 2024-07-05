@@ -36,16 +36,14 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
         if (!isPush){
             interval = setInterval(() => {
                 setHeap(prev => {
-                    const length = heapSize;
-
-                    if (currIndex < length){
+                    if (currIndex < heapSize){
                         let smallIndex = currIndex;
                         const leftChild = getChild(currIndex, 'l');
-                        if (leftChild < length && prev[leftChild].val < prev[smallIndex].val){
+                        if (leftChild < heapSize && prev[leftChild].val < prev[smallIndex].val){
                             smallIndex = leftChild;
                         };
                         const rightChild = getChild(currIndex, 'r');
-                        if (rightChild < length && prev[rightChild].val < prev[smallIndex].val){
+                        if (rightChild < heapSize && prev[rightChild].val < prev[smallIndex].val){
                             smallIndex = rightChild;
                         };
 
@@ -71,8 +69,9 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
                         prev[smallIndex].rightChild = tempRight;
 
                         setCurrIndex(smallIndex);
+                    }else{
+                        setCurrIndex(-1);
                     };
-                    setCurrIndex(-1);
                     clearInterval(interval!);
                     return [...prev]
                 });
