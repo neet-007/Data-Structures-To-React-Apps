@@ -81,7 +81,7 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
           interval = setInterval(() => {
             setHeap(prev => {
                 let parentIdx = getParent(currIndex);
-
+                console.log(parentIdx);
                 if (parentIdx >= 0 && prev[currIndex].val < prev[parentIdx].val){
                     const temp = prev[parentIdx];
 
@@ -101,12 +101,11 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
                     prev[currIndex].leftChild = currLeft < prev.length ? currLeft : -1;
                     prev[currIndex].rightChild = currRight < prev.length ? currRight : -1;
                     if (currIndex === 0){
-                        clearInterval(interval!);
                         setCurrIndex(-1);
                     }else{
-                        clearInterval(interval!);
                         setCurrIndex(parentIdx);
                     };
+                    clearInterval(interval!);
                 }
                 else{
                     if (parentIdx > -1 && prev[parentIdx].leftChild !== currIndex && prev[parentIdx].rightChild !== currIndex){
@@ -117,8 +116,8 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
                             prev[parentIdx].rightChild = currIndex
                         };
                     }
-                    clearInterval(interval!);
                     setCurrIndex(-1);
+                    clearInterval(interval!);
                 }
                 return [...prev];
             });
@@ -129,8 +128,14 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
     },[currIndex, isPush]);
 
     function heapPush(val:string | number){
-      setHeap(prev => [...prev, {val, parent:-1, leftChild:-1, rightChild:-1}]);
-      setCurrIndex(heap.length);
+      setHeap(prev => {
+        if (prev.length > heapSize){
+            prev[heapSize] = {val, parent:-1, leftChild:-1, rightChild:-1};
+            return [...prev]
+        };
+        return [...prev, {val, parent:-1, leftChild:-1, rightChild:-1}]
+      });
+      setCurrIndex(heapSize);
       setIsPush(true);
       setHeapSize(prev => prev + 1);
     };
