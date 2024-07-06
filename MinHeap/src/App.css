@@ -1,0 +1,14 @@
+.compare{
+    background-color: white;
+    animation: compare-animation 500ms ease-in-out;
+};
+
+.nnn{
+    
+}
+
+@keyframes compare-animation{
+    100%{
+        background-color: darkmagenta;
+    }
+}

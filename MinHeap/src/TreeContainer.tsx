@@ -8,6 +8,7 @@ const TreeContainer = () => {
   const NodeRef = useRef<HTMLDivElement>(null);
 
   console.log(heap)
+  //console.log(document.styleSheets[0].cssRules)
   return (
     <div>
       <div>

@@ -6,6 +6,7 @@ export type NodeType = {
     parent:number;
     leftChild:number;
     rightChild:number;
+    className:string;
 };
 
 type NodeCordsSetter = {x:number, y:number, width:number, height:number};
@@ -83,6 +84,7 @@ const Node:React.FC<NodeProps> = ({index, setLeftNodeRect_, complete, ...props})
     return (
       <div style={{width:'100%', display: 'flex', flexDirection: 'column' }} {...props}>
         <p
+          className={heap[index].className}
           style={{
             height: '1rem',
             width: '1rem',

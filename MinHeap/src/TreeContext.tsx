@@ -32,9 +32,9 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
         if (currIndex < 0){
           return;
         };
-        let interval;
+        let timeOut;
         if (!isPush){
-            interval = setInterval(() => {
+            timeOut = setTimeout(() => {
                 setHeap(prev => {
                     if (currIndex < heapSize){
                         let smallIndex = currIndex;
@@ -49,7 +49,6 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
 
                         if (smallIndex === currIndex){
                             setCurrIndex(-1);
-                            clearInterval(interval!);
                             return [...prev];
                         };
 
@@ -57,6 +56,14 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
                         const tempParent = prev[smallIndex].parent;
                         const tempLeft = prev[smallIndex].leftChild;
                         const tempRight = prev[smallIndex].rightChild;
+
+                        if (leftChild < heapSize){
+                            prev[leftChild].className = 'nnn';
+                        };
+                        if (rightChild < heapSize){
+                            prev[rightChild].className = 'nnn';
+                        };
+                        prev[currIndex].className = 'nnn';
 
                         prev[smallIndex] = prev[currIndex];
                         prev[currIndex] = temp;
@@ -69,20 +76,32 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
                         prev[smallIndex].rightChild = tempRight;
 
                         setCurrIndex(smallIndex);
+                        prev[smallIndex].className = 'compare';
+                        const leftChildSmall = getChild(smallIndex, 'l');
+                        if (leftChildSmall < heapSize){
+                            prev[leftChildSmall].className = 'compare';
+                        };
+                        const rightChildSmall = getChild(smallIndex, 'r');
+                        if (rightChildSmall < heapSize){
+                            prev[rightChildSmall].className = 'compare';
+                        };
+
                     }else{
                         setCurrIndex(-1);
                     };
-                    clearInterval(interval!);
                     return [...prev]
                 });
-            }, 2000);
+            }, 1000);
         }
         else{
-          interval = setInterval(() => {
+          timeOut = setTimeout(() => {
             setHeap(prev => {
                 let parentIdx = getParent(currIndex);
-                console.log(parentIdx);
+
                 if (parentIdx >= 0 && prev[currIndex].val < prev[parentIdx].val){
+                    prev[parentIdx].className = 'nnn';
+                    prev[currIndex].className = 'nnn';
+
                     const temp = prev[parentIdx];
 
                     prev[parentIdx] = prev[currIndex];
@@ -100,12 +119,14 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
                     prev[currIndex].parent = currParent;
                     prev[currIndex].leftChild = currLeft < prev.length ? currLeft : -1;
                     prev[currIndex].rightChild = currRight < prev.length ? currRight : -1;
-                    if (currIndex === 0){
-                        setCurrIndex(-1);
-                    }else{
-                        setCurrIndex(parentIdx);
+
+                    setCurrIndex(parentIdx);
+
+                    if(parentIdx > 0){
+                        const parent_idx = getParent(parentIdx);
+                        prev[parentIdx].className = 'compare';
+                        prev[parent_idx].className = 'compare';
                     };
-                    clearInterval(interval!);
                 }
                 else{
                     if (parentIdx > -1 && prev[parentIdx].leftChild !== currIndex && prev[parentIdx].rightChild !== currIndex){
@@ -113,27 +134,36 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
                         if (prev[parentIdx].leftChild === -1){
                             prev[parentIdx].leftChild = currIndex;
                         }else{
-                            prev[parentIdx].rightChild = currIndex
+                            prev[parentIdx].rightChild = currIndex;
                         };
-                    }
+                    };
+                    prev[currIndex].className = 'nnn'
                     setCurrIndex(-1);
-                    clearInterval(interval!);
-                }
+                };
                 return [...prev];
             });
-    }, 2000);
+    }, 1000);
 }
 
-      return () => clearInterval(interval!);
+      return () => clearTimeout(timeOut!);
     },[currIndex, isPush]);
 
     function heapPush(val:string | number){
       setHeap(prev => {
+        if(heapSize > 0){
+            const parentIdx = getParent(heapSize);
+            prev[parentIdx].className = 'compare';
+            if (prev[parentIdx].leftChild === -1){
+                prev[parentIdx].leftChild = heapSize;
+            }else{
+                prev[parentIdx].rightChild = heapSize;
+            };
+        };
         if (prev.length > heapSize){
-            prev[heapSize] = {val, parent:-1, leftChild:-1, rightChild:-1};
+            prev[heapSize] = {val, parent:-1, leftChild:-1, rightChild:-1, className:'compare'};
             return [...prev]
         };
-        return [...prev, {val, parent:-1, leftChild:-1, rightChild:-1}]
+        return [...prev, {val, parent:-1, leftChild:-1, rightChild:-1, className:'compare'}]
       });
       setCurrIndex(heapSize);
       setIsPush(true);
@@ -146,6 +176,13 @@ export const TreeContextProvidor:React.FC<ComponentProps<'div'>> = ({children}) 
         prev[0] = prev[heapSize - 1];
         prev[heapSize - 1] = temp;
         prev[0].parent = -1;
+        if (prev[heapSize - 1].leftChild !== -1){
+            prev[prev[heapSize - 1].leftChild].className = 'compare';
+        };
+        if (prev[heapSize - 1].rightChild !== -1){
+            prev[prev[heapSize - 1].rightChild].className = 'compare';
+        };
+        prev[0].className = 'compare';
         prev[0].leftChild = prev[heapSize - 1].leftChild;
         prev[0].rightChild = prev[heapSize - 1].rightChild;
         prev[heapSize - 1].leftChild = prev[heapSize - 1].rightChild = prev[heapSize - 1].parent = -1;
