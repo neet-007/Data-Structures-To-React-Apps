@@ -1,0 +1,21 @@
+.highlight{
+    background-color: inherit;
+    animation: highlight-animation 500ms ease-in-out;
+}
+
+.found{
+    background-color: inherit;
+    animation: found-animation 500ms ease-in-out;
+}
+
+@keyframes highlight-animation{
+    100%{
+        background-color: blueviolet;
+    }
+}
+
+@keyframes found-animation{
+    100%{
+        background-color: aquamarine;
+    }
+}
