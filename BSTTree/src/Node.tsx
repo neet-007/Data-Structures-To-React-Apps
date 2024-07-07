@@ -3,7 +3,7 @@ import { useTreeContext } from './TreeContext';
 
 interface NodeProps extends ComponentProps<'div'>{
   node:NodeType,
-  complete:boolean
+  shift:'l' | 'r' | ''
 };
 
 export type NodeType = {
@@ -14,10 +14,10 @@ export type NodeType = {
     className:'highlight' | 'found' | '';
 };
 
-const Node:React.FC<NodeProps> = ({node, complete, ...props}) => {
+const Node:React.FC<NodeProps> = ({node, shift, ...props}) => {
   const {tree} = useTreeContext()
   return (
-    <div style={{width:'100%', display:'flex', flexDirection:'column'}} {...props}>
+    <div style={{width:'100%', display:'flex', flexDirection:'column', marginLeft:`${shift === 'l' ? '-50%': shift === 'r' ?'50%' : ''}`,}} {...props}>
       <p
         className={node.className}
         style={{
@@ -30,7 +30,6 @@ const Node:React.FC<NodeProps> = ({node, complete, ...props}) => {
           border:'1px solid black',
           backgroundColor:'white',
           borderRadius:'50%',
-          marginLeft:`${complete ? '0%': '-50%'}`,
           padding:'0.25rem'
         }}
       >
@@ -43,10 +42,10 @@ const Node:React.FC<NodeProps> = ({node, complete, ...props}) => {
         }}
       >
         {node.left !== -1 &&
-          <Node node={tree[node.left]} complete={node.left !== -1}/>
+          <Node node={tree[node.left]} shift={node.right !== -1 ? '' : 'l'}/>
         }
         {node.right !== -1 &&
-          <Node node={tree[node.right]} complete/>
+          <Node node={tree[node.right]} shift={node.left !== -1 ? '' : 'r'}/>
         }
       </div>
     </div>

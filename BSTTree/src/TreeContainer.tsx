@@ -35,7 +35,7 @@ const TreeContainer:React.FC<ComponentProps<'div'>> = () => {
         </div>
       </div>
       {tree.length > 0 &&
-        <Node node={tree[0]} complete/>
+        <Node node={tree[0]} shift=''/>
       }
     </div>
   )
