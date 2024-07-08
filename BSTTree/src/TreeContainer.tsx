@@ -3,7 +3,7 @@ import { useTreeContext } from './TreeContext';
 import Node from './Node';
 
 const TreeContainer:React.FC<ComponentProps<'div'>> = () => {
-  const {tree, treeSize, addNode, find, deleteNode} = useTreeContext()
+  const {tree, addNode, find, deleteNode} = useTreeContext()
   const inputRef = useRef<HTMLInputElement>(null);
   console.log(tree);
   function Add(){
