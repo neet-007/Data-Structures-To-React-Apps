@@ -238,8 +238,6 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
         };
     },[currIndex, mode]);
 
-    console.log(currIndex)
-
     function addNode(val:number){
         if (tree.length === 0){
             setTree(prev => [...prev, {val, parent:-1, left:-1, right:-1} as NodeType]);
