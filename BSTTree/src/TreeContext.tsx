@@ -41,7 +41,11 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                 setTree(prev => {
                     if (prev[currIndex].val === currVal){
                         if (nextCommand === 'add'){
-                            setMode('add');
+                            if (prev[currIndex].right !== -1){
+                                setCurrIndex(prev[currIndex].right);
+                            }else{
+                                setMode('add');
+                            };
                         }else if(nextCommand === 'delete'){
                             console.log('delte')
                             console.log(prev[currIndex])
