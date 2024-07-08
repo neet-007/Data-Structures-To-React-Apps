@@ -134,6 +134,9 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
 
                         // correct the children indecies after shifting
                         for (let i = prev[currIndex].parent; i < prev.length; i++){
+                            if (i !== currIndex && prev[i].parent !== -1){
+                                prev[i].parent =- 1;
+                            };
                             if (prev[i].left !== -1){
                                 prev[i].left -= 1;
                             };
@@ -148,7 +151,12 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         prev[prev[currIndex].left].parent = prev[currIndex].parent;
 
                         const curr = prev[currIndex].left;
+                        prev[currIndex] = prev[curr];
+                        prev = prev.filter((v, i) => i === curr ? undefined : v);
                         for (let i = currIndex; i < prev.length; i ++){
+                            if (i !== currIndex && prev[i].parent !== -1){
+                                prev[i].parent -= 1;
+                            };
                             if (prev[i].left !== -1){
                                 prev[i].left -= 1;
                             };
@@ -156,15 +164,18 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                                 prev[i].right -= 1;
                             };
                         };
-                        prev[currIndex] = prev[curr];
-                        prev = prev.filter((v, i) => i === curr ? undefined : v);
                     // one child on rigth
                     }else if (prev[currIndex].right !== -1 && prev[currIndex].left === -1){
                         // swap parents
                         prev[prev[currIndex].right].parent = prev[currIndex].parent;
 
                         const curr = prev[currIndex].right;
+                        prev[currIndex] = prev[curr];
+                        prev = prev.filter((v, i) => i === curr ? undefined : v);
                         for (let i = currIndex; i < prev.length; i ++){
+                            if (i !== currIndex && prev[i].parent !== -1){
+                                prev[i].parent -= 1;
+                            };
                             if (prev[i].left !== -1){
                                 prev[i].left -= 1;
                             };
@@ -172,14 +183,11 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                                 prev[i].right -= 1;
                             };
                         };
-                        prev[currIndex] = prev[curr];
-                        prev = prev.filter((v, i) => i === curr ? undefined : v);
                     // two children
                     }else{
                         let curr = prev[currIndex].right;
 
                         while(prev[curr].left !== -1){
-                            console.log('sdsad')
                             curr = prev[curr].left;
                         };
 
@@ -197,6 +205,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
 
                             prev[curr].right = prev[currIndex].right;
                         }else{
+                            console.log('here')
                             prev[curr].left = prev[currIndex].left;
                             if (prev[curr].right !== -1){
                                 prev[prev[curr].right].parent = currIndex;
@@ -208,6 +217,9 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         prev = prev.filter((v, i) => i === curr ? undefined : v);
                         // correct all the shifted indecies
                         for (let i = currIndex; i < prev.length; i ++){
+                            if (i !== currIndex && prev[i].parent !== -1){
+                                prev[i].parent -= 1;
+                            };
                             if (prev[i].left !== -1 && prev[i].left !== currIndex + 1){
                                 prev[i].left -= 1;
                             };
