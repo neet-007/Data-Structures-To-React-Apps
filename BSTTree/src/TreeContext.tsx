@@ -40,10 +40,11 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
             setTimeout(() =>{
                 setTree(prev => {
                     if (prev[currIndex].val === currVal){
-                        console.log('equal')
                         if (nextCommand === 'add'){
                             setMode('add');
                         }else if(nextCommand === 'delete'){
+                            console.log('delte')
+                            console.log(prev[currIndex])
                             setMode('delete');
                         }else{
                             prev[currIndex].className = 'found';
@@ -94,7 +95,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                     }
                     return [...prev]
                 });
-            },2000);
+            },500);
         }
         if (mode === 'add'){
             setTree(prev => {
@@ -116,7 +117,6 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
             setTree(prev => {
                 // leaf node
                 if (prev[currIndex].left === -1 && prev[currIndex].right === -1){
-                    console.log('leaf')
                     if (prev[prev[currIndex].parent].left === currIndex){
                         prev[prev[currIndex].parent].left = -1;
                     }else{
@@ -135,19 +135,11 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                     prev = prev.filter((v, i) => i === currIndex ? undefined: v);
                 // one child on left
                 }else if (prev[currIndex].left !== -1 && prev[currIndex].right === -1){
-                    console.log('one child left')
                     // swap parents
                     prev[prev[currIndex].left].parent = prev[currIndex].parent;
 
-                    // replace the node with grandchild
-                    if (prev[prev[currIndex].parent].left === currIndex){
-                        prev[prev[currIndex].parent].left = prev[currIndex].left;
-                    }else{
-                        prev[prev[currIndex].parent].right = prev[currIndex].left;
-                    };
-
-                    // correct the children indecies after shifting
-                    for (let i = prev[currIndex].parent; i < prev.length; i++){
+                    const curr = prev[currIndex].left;
+                    for (let i = currIndex; i < prev.length; i ++){
                         if (prev[i].left !== -1){
                             prev[i].left -= 1;
                         };
@@ -155,23 +147,15 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                             prev[i].right -= 1;
                         };
                     };
-
-                    prev = prev.filter((v, i) => i === currIndex ? undefined : v);
+                    prev[currIndex] = prev[curr];
+                    prev = prev.filter((v, i) => i === curr ? undefined : v);
                 // one child on rigth
                 }else if (prev[currIndex].right !== -1 && prev[currIndex].left === -1){
-                    console.log('one child right')
                     // swap parents
                     prev[prev[currIndex].right].parent = prev[currIndex].parent;
 
-                    // replace the node with grandchild
-                    if (prev[prev[currIndex].parent].left === currIndex){
-                        prev[prev[currIndex].parent].left = prev[currIndex].right;
-                    }else{
-                        prev[prev[currIndex].parent].right = prev[currIndex].right;
-                    };
-
-                    // correct the children indecies after shifting
-                    for (let i = prev[currIndex].parent; i < prev.length; i++){
+                    const curr = prev[currIndex].right;
+                    for (let i = currIndex; i < prev.length; i ++){
                         if (prev[i].left !== -1){
                             prev[i].left -= 1;
                         };
@@ -179,14 +163,12 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                             prev[i].right -= 1;
                         };
                     };
-
-                    prev = prev.filter((v, i) => i === currIndex ? undefined : v);
+                    prev[currIndex] = prev[curr];
+                    prev = prev.filter((v, i) => i === curr ? undefined : v);
                 // two children
                 }else{
-                    console.log('two cildren')
                     let curr = prev[currIndex].right;
-                    console.log(curr)
-                    console.log(prev[curr].left)
+
                     while(prev[curr].left !== -1){
                         console.log('sdsad')
                         curr = prev[curr].left;
@@ -195,36 +177,35 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                     const currParent = prev[curr].parent;
 
                     prev[curr].parent = prev[currIndex].parent;
-                    if (prev[prev[currIndex].parent].left === currIndex){
-                        prev[prev[currIndex].parent].left = curr;
+
+                    if (currParent !== currIndex){
+                        prev[currParent].left = prev[curr].right;
+                        if (prev[curr].right !== -1){
+                            prev[prev[curr].right].parent = currParent;
+                        };
+
+                        prev[curr].left = prev[currIndex].left;
+
+                        prev[curr].right = prev[currIndex].right;
                     }else{
-                        prev[prev[currIndex].parent].right = curr;
+                        prev[curr].left = prev[currIndex].left;
+                        if (prev[curr].right !== -1){
+                            prev[prev[curr].right].parent = currIndex;
+                        };
                     };
-
-                    prev[currParent].left = prev[curr].right;
-                    if (prev[curr].right !== -1){
-                        prev[prev[curr].right].parent = currParent;
-                    };
-
-                    prev[curr].left = prev[currIndex].left;
-                    if (prev[currIndex].left !== -1){
-                        prev[prev[currIndex].left].parent = curr;
-                    };
-                    prev[curr].right = prev[currIndex].right;
-                    if (prev[currIndex].right !== -1){
-                        prev[prev[currIndex].right].parent = curr;
-                    };
-
-                    for (let i = prev[currIndex].parent; i < prev.length; i++){
-                        if (prev[i].left !== -1){
+                    // overwrite the deleted node
+                    prev[currIndex] = prev[curr];
+                    // remove the duplicated node
+                    prev = prev.filter((v, i) => i === curr ? undefined : v);
+                    // correct all the shifted indecies
+                    for (let i = currIndex; i < prev.length; i ++){
+                        if (prev[i].left !== -1 && prev[i].left !== currIndex + 1){
                             prev[i].left -= 1;
                         };
                         if (prev[i].right !== -1){
                             prev[i].right -= 1;
                         };
                     };
-
-                    prev = prev.filter((v, i) => i === currIndex ? undefined : v);
                 };
                 setCurrIndex(-1);
                 setCurrVal(-1);
