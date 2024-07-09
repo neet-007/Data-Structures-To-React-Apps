@@ -133,14 +133,14 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         };
 
                         // correct the children indecies after shifting
-                        for (let i = prev[currIndex].parent; i < prev.length; i++){
-                            if (i !== currIndex && prev[i].parent !== -1){
+                        for (let i = 0; i < prev.length; i++){
+                            if (prev[i].parent >= currIndex && prev[i].parent !== -1){
                                 prev[i].parent =- 1;
                             };
-                            if (prev[i].left !== -1){
+                            if (prev[i].left >= currIndex && prev[i].left !== -1){
                                 prev[i].left -= 1;
                             };
-                            if (prev[i].right !== -1){
+                            if (prev[i].right >= currIndex && prev[i].right !== -1){
                                 prev[i].right -= 1;
                             };
                         };
@@ -153,14 +153,14 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         const curr = prev[currIndex].left;
                         prev[currIndex] = prev[curr];
                         prev = prev.filter((v, i) => i === curr ? undefined : v);
-                        for (let i = currIndex; i < prev.length; i ++){
-                            if (i !== currIndex && prev[i].parent !== -1){
+                        for (let i = 0; i < prev.length; i ++){
+                            if (prev[i].parent >= curr && prev[i].parent !== -1){
                                 prev[i].parent -= 1;
                             };
-                            if (prev[i].left !== -1){
+                            if (prev[i].left >= curr && prev[i].left !== -1){
                                 prev[i].left -= 1;
                             };
-                            if (prev[i].right !== -1){
+                            if (prev[i].right >= curr && prev[i].right !== -1){
                                 prev[i].right -= 1;
                             };
                         };
@@ -172,14 +172,14 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         const curr = prev[currIndex].right;
                         prev[currIndex] = prev[curr];
                         prev = prev.filter((v, i) => i === curr ? undefined : v);
-                        for (let i = currIndex; i < prev.length; i ++){
-                            if (i !== currIndex && prev[i].parent !== -1){
+                        for (let i = 0; i < prev.length; i ++){
+                            if (prev[i].parent >= curr && prev[i].parent !== -1){
                                 prev[i].parent -= 1;
                             };
-                            if (prev[i].left !== -1){
+                            if (prev[i].left >= curr && prev[i].left !== -1){
                                 prev[i].left -= 1;
                             };
-                            if (prev[i].right !== -1){
+                            if (prev[i].right >= curr && prev[i].right !== -1){
                                 prev[i].right -= 1;
                             };
                         };
@@ -210,20 +210,23 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                             if (prev[curr].right !== -1){
                                 prev[prev[curr].right].parent = currIndex;
                             };
+                            if (prev[curr].right !== -1){
+                                prev[curr].right -= 1;
+                            };
                         };
                         // overwrite the deleted node
                         prev[currIndex] = prev[curr];
                         // remove the duplicated node
                         prev = prev.filter((v, i) => i === curr ? undefined : v);
                         // correct all the shifted indecies
-                        for (let i = currIndex; i < prev.length; i ++){
-                            if (i !== currIndex && prev[i].parent !== -1){
+                        for (let i = 0; i < prev.length; i ++){
+                            if (prev[i].parent >= curr && prev[i].parent !== -1){
                                 prev[i].parent -= 1;
                             };
-                            if (prev[i].left !== -1 && prev[i].left !== currIndex + 1){
+                            if (prev[i].left >= curr && prev[i].left !== -1){
                                 prev[i].left -= 1;
                             };
-                            if (prev[i].right !== -1){
+                            if (prev[i].right >= curr && prev[i].right !== -1){
                                 prev[i].right -= 1;
                             };
                         };
