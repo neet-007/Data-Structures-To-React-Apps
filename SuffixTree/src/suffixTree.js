@@ -1,5 +1,5 @@
 const ALPHABET = [
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    '$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
 ];
 
@@ -171,7 +171,7 @@ function buildSuffixTree(s, suffixArray, lcpArray){
 
         if (currNode.stringDepth === lcpPrev){
             currNode = createLeafNode(s, currNode, currIndex, suffix);
-            suffixTree[currIndex].children[ALPHABET.indexOf(s[currNode.edgeStart])] = currIndex + 1;
+            suffixTree[currIndex].children[ALPHABET.indexOf(s[currNode.edgeStart].toLowerCase())] = suffixTree.length;
             currIndex = suffixTree.length;
             suffixTree.push(currNode);
         }else{
@@ -179,22 +179,20 @@ function buildSuffixTree(s, suffixArray, lcpArray){
             const offset = lcpPrev - currNode.stringDepth;
             const midNode = breakeNode(currNode, currIndex, start, offset);
 
-            midNode.children[ALPHABET.indexOf(s[start + offset])] = currNode.children[ALPHABET.indexOf(s[start])];
+            midNode.children[ALPHABET.indexOf(s[start + offset].toLowerCase())] = currNode.children[ALPHABET.indexOf(s[start].toLowerCase())];
+            suffixTree[suffixTree[currIndex].children[ALPHABET.indexOf(s[start].toLowerCase())]].parent = suffixTree.length;
+            suffixTree[suffixTree[currIndex].children[ALPHABET.indexOf(s[start].toLowerCase())]].edgeStart += offset;
 
-            suffixTree[suffixTree[currIndex].children[ALPHABET.indexOf(s[start])]].parent = suffixTree.length;
-            suffixTree[suffixTree[currIndex].children[ALPHABET.indexOf(s[start])]].edgeStart += offset;
-
-            suffixTree[currIndex].children[ALPHABET.indexOf(s[start])] = suffixTree.length;
+            suffixTree[currIndex].children[ALPHABET.indexOf(s[start].toLowerCase())] = suffixTree.length;
             currIndex = suffixTree.length;
             suffixTree.push(midNode);
 
             currNode = createLeafNode(s, midNode, currIndex, suffix);
-            suffixTree[currIndex].children[ALPHABET.indexOf(s[currNode.edgeStart])] = currIndex;
+            suffixTree[currIndex].children[ALPHABET.indexOf(s[currNode.edgeStart].toLowerCase())] = currIndex + 1;
 
             currIndex = suffixTree.length;
             suffixTree.push(currNode);
         };
-
         if (i < s.length - 1){
             lcpPrev = lcpArray[i];
         };
@@ -207,8 +205,8 @@ const s = 'helloworld';
 const suffixArray = buildSuffixArray(s);
 const lcpArray = computeLCPArray(s, suffixArray);
 const suffixTree = buildSuffixTree(s, suffixArray, lcpArray);
+//console.log(suffixTree)
 
-for (let i = 1; i < suffixTree.length; i ++){
+for (let i = 1; i < suffixTree.length; i++){
     console.log(s.slice(suffixTree[i].edgeStart, suffixTree[i].edgeEnd + 1));
 };
-
