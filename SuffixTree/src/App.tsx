@@ -5,20 +5,21 @@ import SuffixArray from './SuffixArray'
 import { useTreeContext } from './TreeContext'
 
 function App() {
-  const {text, setText} = useTreeContext();
+  const {text, command, setText, setCommand} = useTreeContext();
   const InputRef = useRef<HTMLInputElement>(null);
   function handleClick(){
     if (!InputRef.current){
       return
     };
     setText(InputRef.current.value);
+    setCommand(1);
   };
   return (
     <div>
-      {text !== '' &&
+      {command > 0 &&
         <SuffixArray/>
       }
-      {text !== '' &&
+      {command > 1 &&
         <LcpArray/>
       }
       <div>

@@ -6,7 +6,7 @@ interface SuffixArrayProps extends ComponentProps<'div'>{
 };
 
 const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
-    const {text, setSuffixArray, ALPHABET} = useTreeContext()
+    const {text, setSuffixArray, ALPHABET, setCommand} = useTreeContext()
     const [length, setLength] = useState(0);
     const [order, setOrder] = useState<number[]>(Array(text.length).fill(0));
     const [eqvClasses, setEqvClasses] = useState<number[]>(Array(text.length).fill(0));
@@ -14,6 +14,7 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
     useEffect(() => {
         if (text !== '' && length > text.length){
             setSuffixArray(order);
+            setCommand(2);
             return
         }else if (length === 0){
             setTimeout(() => {
@@ -97,11 +98,12 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
     //console.log(order)
     return (
         <>
+            <h3>Suffix Array</h3>
             {order[0] !== -1 &&
             <div {...props}>
                 {order.map((v, i) => {
                     return <div key={`suff-arr-${i}`}>
-                            {text.slice(v, v + (length > text.length ? text.length: length))}
+                            {text.slice(v, v + (length))}
                            </div>
                 })}
             </div>
