@@ -83,6 +83,9 @@ function buildSuffixArray(s){
     let l = 1;
 
     while (l < s.length){
+        console.log(l)
+        console.log(order)
+        console.log(classes)
         order = sortingDoubles(s, l, order, classes);
         classes = updateClasses(s, l, order, classes);
         l *= 2;
@@ -201,12 +204,14 @@ function buildSuffixTree(s, suffixArray, lcpArray){
     return suffixTree
 };
 
-const s = 'helloworld';
+const s = 'hello';
 const suffixArray = buildSuffixArray(s);
 const lcpArray = computeLCPArray(s, suffixArray);
-const suffixTree = buildSuffixTree(s, suffixArray, lcpArray);
+//const suffixTree = buildSuffixTree(s, suffixArray, lcpArray);
 //console.log(suffixTree)
 
+/*
 for (let i = 1; i < suffixTree.length; i++){
     console.log(s.slice(suffixTree[i].edgeStart, suffixTree[i].edgeEnd + 1));
 };
+*/
