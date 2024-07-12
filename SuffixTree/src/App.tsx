@@ -2,10 +2,11 @@ import { useRef } from 'react';
 import './App.css'
 import LcpArray from './LcpArray'
 import SuffixArray from './SuffixArray'
+import Node from './Node';
 import { useTreeContext } from './TreeContext'
 
 function App() {
-  const {text, command, setText, setCommand} = useTreeContext();
+  const {text, suffixTree, command, setText, setCommand} = useTreeContext();
   const InputRef = useRef<HTMLInputElement>(null);
   function handleClick(){
     if (!InputRef.current){
@@ -25,6 +26,11 @@ function App() {
       <div>
         <input type="text" ref={InputRef}/>
         <button onClick={handleClick}>create</button>
+      </div>
+      <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
+        {suffixTree[0] &&
+          <Node node={suffixTree[0]}/>
+        }
       </div>
     </div>
   )

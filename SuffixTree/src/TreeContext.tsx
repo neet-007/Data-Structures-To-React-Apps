@@ -34,10 +34,10 @@ const INITIAL_STATE = {
 const TreeContext = createContext<TreeContextType>(INITIAL_STATE);
 
 export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) => {
-    const [text, setText] = useState<string>('');
+    const [text, setText] = useState<string>('hello');
     const [suffixArray, setSuffixArray] = useState<number[]>([]);
     const [lcpArray, setLcpArray] = useState<number[]>([]);
-    const [suffixTree, setSuffixTree] = useState<NodeType[]>([]);
+    const [suffixTree, setSuffixTree] = useState<NodeType[]>([{parent:-1, stringDepth:0, edgeStart:0, edgeEnd:0, children:[1,2,3]},{parent:1, stringDepth:0, edgeStart:0, edgeEnd:0, children:[]},{parent:1, stringDepth:0, edgeStart:0, edgeEnd:0, children:[]},{parent:1, stringDepth:0, edgeStart:0, edgeEnd:0, children:[]},]);
     const [command, setCommand] = useState<0 | 1 | 2 | 3>(0);
     const [ALPHABET, setALPHABET] = useState<string[]>([
         '$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
