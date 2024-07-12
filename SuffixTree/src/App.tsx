@@ -16,19 +16,20 @@ function App() {
     setCommand(1);
   };
   return (
-    <div>
+    <div style={{position:'relative'}}>
       {command > 0 &&
         <SuffixArray/>
       }
       {command > 1 &&
         <LcpArray/>
       }
-      <div>
-        <input type="text" ref={InputRef}/>
-        <button onClick={handleClick}>create</button>
-      </div>
+
       <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-        {suffixTree[0] &&
+        <div>
+          <input type="text" ref={InputRef}/>
+          <button onClick={handleClick}>create</button>
+        </div>
+        {command > 2 &&
           <Node node={suffixTree[0]}/>
         }
       </div>
