@@ -1,5 +1,7 @@
-import React, { ComponentProps, useEffect, useMemo, useRef, useState } from 'react'
+import React, { ComponentProps, useEffect, useRef, useState } from 'react'
 import { useTreeContext } from './TreeContext';
+
+const CHARDIST = 30;
 
 export type NodeType = {
     parent:number,
@@ -9,17 +11,27 @@ export type NodeType = {
     children:number[]
 };
 
+type RectType = {
+    x1:number,
+    x2:number,
+    y1:number,
+    y2:number,
+    width:number,
+    height:number,
+    angle:number
+};
+
 interface NodeProps extends ComponentProps<'div'>{
     node:NodeType
 };
 
 const Node:React.FC<NodeProps> = ({node, ...props}) => {
-    const {text, suffixTree} = useTreeContext();
+    const {text, suffixTree, ALPHABET} = useTreeContext();
     const nodeRef = useRef<HTMLDivElement | null>(null);
     const childrenRef = useRef<Map<any, any> | null>(null);
     const [windowDimentions, setWindowDimentions] = useState<{height:number, width:number}>({height:0, width:0});
     const prevDimintions = useRef<{height:number, width:number}>(windowDimentions);
-    const [nodeChildrenDimentions, setNodeChildrenDimentions] = useState<Map<any, any>>(new Map());
+    const [nodeChildrenDimentions, setNodeChildrenDimentions] = useState<RectType[]>([]);
 
     useEffect(() => {
         function updateWindowDimentions(){
@@ -39,31 +51,33 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
     useEffect(() => {
         if (nodeRef.current){
             const map = getMap();
-            const returnMap = new Map();
+            const arr = Array(ALPHABET.length).fill(-1);
             const parentRect = nodeRef.current.getBoundingClientRect();
             map.forEach((val, key) => {
                 if (!val){
-                    returnMap.set(key, {
+                    arr[key] = {
                         x1:0,
                         y1:0,
                         x2:0,
                         y2:0,
                         width:0,
-                        heigth:0
-                    });
+                        heigth:0,
+                        angle:0
+                    };
                 }else{
-                    returnMap.set(key, {
+                    arr[key] = {
                         x1:parentRect.x + parentRect.width / 2,
                         y1:parentRect.y + parentRect.height / 2,
                         x2:val.x + val.width / 2,
                         y2:val.y + val.height / 2,
                         width:val.width,
-                        height:val.height
-                    });
+                        height:val.height,
+                        angle:Math.atan2((val.y - parentRect.y), (val.x - parentRect.x)) * (180/Math.PI)
+                    };
                 };
             });
 
-            setNodeChildrenDimentions(returnMap);
+            setNodeChildrenDimentions(arr);
         };
     },[windowDimentions.height, windowDimentions.width]);
 
@@ -91,7 +105,7 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
             <div style={{
                 display:'flex',
                 justifyContent:'center',
-                gap:'1rem',
+                gap:'2rem',
                 height:'100%',
                 width:'100%'
             }}>
@@ -105,6 +119,7 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
                                 style={{
                                     height:'100%',
                                     width:'100%',
+                                    marginTop:`${(text.length - v) * CHARDIST}px`
                                 }}
                                 ref={(elem) => {
                                     const map = getMap();
@@ -114,19 +129,19 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
                                         map.delete(elem)
                                     };
                                 }}>
-                                <svg style={{position:'absolute', top:0, left:0, width:'100%', height:'100%'}}>
-                                    <line x1={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).x1 : 0}
-                                          y1={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).y1 : 0}
-                                          x2={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).x2 : 0}
-                                          y2={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).y2 : 0}
-                                          height={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).height : 0}
-                                          width={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).width : 0}
+                                <svg style={{position:'absolute', top:0, left:0, width:'100%', height:'100%', zIndex:-1}}>
+                                    <line x1={nodeChildrenDimentions[v] ? nodeChildrenDimentions[v].x1 : 0}
+                                          y1={nodeChildrenDimentions[v] ? nodeChildrenDimentions[v].y1 : 0}
+                                          x2={nodeChildrenDimentions[v] ? nodeChildrenDimentions[v].x2 : 0}
+                                          y2={nodeChildrenDimentions[v] ? nodeChildrenDimentions[v].y2 : 0}
+                                          height={nodeChildrenDimentions[v] ? nodeChildrenDimentions[v].height : 0}
+                                          width={nodeChildrenDimentions[v] ? nodeChildrenDimentions[v].width : 0}
                                           stroke='black'>
                                     </line>
                                     {text.slice(v, text.length).split('').map((c, idx) => (
                                         <text key={`node-${i}-child-${c}-${idx}`}
-                                        x={nodeChildrenDimentions.get(v) ? (nodeChildrenDimentions.get(v).x1 + nodeChildrenDimentions.get(v).x2) / 2+ (idx * 10) : 0}
-                                        y={nodeChildrenDimentions.get(v) ? (nodeChildrenDimentions.get(v).y1 + nodeChildrenDimentions.get(v).y2) / 2+ (idx * 10) : 0}
+                                        x={nodeChildrenDimentions[v] ? (nodeChildrenDimentions[v].x1 + nodeChildrenDimentions[v].x2) / 2 + (idx * CHARDIST * Math.cos(nodeChildrenDimentions[v].angle * Math.PI / 180)) : 0}
+                                        y={nodeChildrenDimentions[v] ? (nodeChildrenDimentions[v].y1 - ((text.length - v) * CHARDIST) + nodeChildrenDimentions[v].y2) / 2 + idx * CHARDIST * Math.sin(nodeChildrenDimentions[v].angle * Math.PI / 180): 0}
                                         textAnchor="middle"
                                         alignmentBaseline="middle"
                                         style={{ fontSize: '16px', fill: 'red' }}
