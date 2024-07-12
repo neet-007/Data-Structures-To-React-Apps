@@ -188,7 +188,7 @@ function buildSuffixTree(s, suffixArray, lcpArray){
             suffixTree.push(midNode);
 
             currNode = createLeafNode(s, midNode, currIndex, suffix);
-            suffixTree[currIndex].children[ALPHABET.indexOf(s[currNode.edgeStart].toLowerCase())] = currIndex + 1;
+            suffixTree[currIndex].children[ALPHABET.indexOf(s[currNode.edgeStart].toLowerCase())] = suffixTree.length;
 
             currIndex = suffixTree.length;
             suffixTree.push(currNode);
@@ -201,15 +201,687 @@ function buildSuffixTree(s, suffixArray, lcpArray){
     return suffixTree
 };
 
-const s = 'hello';
+const s = 'helloworld';
 const suffixArray = buildSuffixArray(s);
 const lcpArray = computeLCPArray(s, suffixArray);
-console.log(lcpArray)
-//const suffixTree = buildSuffixTree(s, suffixArray, lcpArray);
+//console.log(lcpArray)
+const suffixTree = buildSuffixTree(s, suffixArray, lcpArray);
 //console.log(suffixTree)
+
+function deepEqualWithDiff(obj1, obj2, path = "") {
+    if (obj1 === obj2) return true;
+  
+    if (typeof obj1 !== 'object' || typeof obj2 !== 'object' || obj1 === null || obj2 === null) {
+      console.log(`Difference at ${path}: ${obj1} !== ${obj2}`);
+      return false;
+    }
+  
+    let keys1 = Object.keys(obj1);
+    let keys2 = Object.keys(obj2);
+  
+    if (keys1.length !== keys2.length) {
+      console.log(`Difference at ${path}: keys length mismatch ${keys1.length} !== ${keys2.length}`);
+      return false;
+    }
+  
+    for (let key of keys1) {
+      if (!keys2.includes(key)) {
+        console.log(`Difference at ${path}: key ${key} not found in second object`);
+        return false;
+      }
+      if (!deepEqualWithDiff(obj1[key], obj2[key], `${path}.${key}`)) return false;
+    }
+  
+    return true;
+  }
+  
+  function arraysEqualWithDiff(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+      console.log(`Difference in array lengths: ${arr1.length} !== ${arr2.length}`);
+      return false;
+    }
+    for (let i = 0; i < arr1.length; i++) {
+      if (!deepEqualWithDiff(arr1[i], arr2[i], `array[${i}]`)) return false;
+    }
+    return true;
+  }
+
+//console.log(arraysEqualWithDiff(arr1, arr2))
+
+function traverse(node){
+    if (node.edgeStart !== -1){
+        console.log(s.slice(node.edgeStart, node.edgeEnd + 1));
+    };
+    for (let i = 0; i < node.children.length; i++){
+        if (node.children[i] !== -1){
+            traverse(suffixTree[node.children[i]]);
+        };
+    };
+}
+
+//traverse(suffixTree[0])
 
 /*
 for (let i = 1; i < suffixTree.length; i++){
     console.log(s.slice(suffixTree[i].edgeStart, suffixTree[i].edgeEnd + 1));
 };
 */
+
+const arr1 = [
+    {
+      parent: -1,
+      stringDepth: 0,
+      edgeStart: -1,
+      edgeEnd: -1,
+      children: [
+        -1, -1, -1, -1,  1,  2, -1, -1,
+         3, -1, -1, -1,  5, -1, -1,  9,
+        -1, -1, 11, -1, -1, -1, -1, 12,
+        -1, -1, -1
+      ]
+    },
+    {
+      parent: 0,
+      stringDepth: 1,
+      edgeStart: 9,
+      edgeEnd: 9,
+      children: [
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1
+      ]
+    },
+    {
+      parent: 0,
+      stringDepth: 9,
+      edgeStart: 1,
+      edgeEnd: 9,
+      children: [
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1
+      ]
+    },
+    {
+      parent: 0,
+      stringDepth: 10,
+      edgeStart: 0,
+      edgeEnd: 9,
+      children: [
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1
+      ]
+    },
+    {
+      parent: 5,
+      stringDepth: 2,
+      edgeStart: 9,
+      edgeEnd: 9,
+      children: [
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1
+      ]
+    },
+    {
+      parent: 0,
+      stringDepth: 1,
+      edgeStart: 8,
+      edgeEnd: 8,
+      children: [
+        -1, -1, -1, -1,  4, -1, -1, -1,
+        -1, -1, -1, -1,  6, -1, -1,  7,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1
+      ]
+    },
+    {
+      parent: 5,
+      stringDepth: 8,
+      edgeStart: 3,
+      edgeEnd: 9,
+      children: [
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1
+      ]
+    },
+    {
+      parent: 5,
+      stringDepth: 7,
+      edgeStart: 4,
+      edgeEnd: 9,
+      children: [
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1
+      ]
+    },
+    {
+      parent: 9,
+      stringDepth: 4,
+      edgeStart: 7,
+      edgeEnd: 9,
+      children: [
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1
+      ]
+    },
+    {
+      parent: 0,
+      stringDepth: 1,
+      edgeStart: 6,
+      edgeEnd: 6,
+      children: [
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1,  8, -1, -1, -1, -1, 10,
+        -1, -1, -1
+      ]
+    },
+    {
+      parent: 9,
+      stringDepth: 6,
+      edgeStart: 5,
+      edgeEnd: 9,
+      children: [
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1
+      ]
+    },
+    {
+      parent: 0,
+      stringDepth: 3,
+      edgeStart: 7,
+      edgeEnd: 9,
+      children: [
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1
+      ]
+    },
+    {
+      parent: 0,
+      stringDepth: 5,
+      edgeStart: 5,
+      edgeEnd: 9,
+      children: [
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1
+      ]
+    }
+  ]
+
+const arr2 = [
+    {
+        "parent": -1,
+        "stringDepth": 0,
+        "edgeStart": -1,
+        "edgeEnd": -1,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            1,
+            2,
+            -1,
+            -1,
+            3,
+            -1,
+            -1,
+            -1,
+            5,
+            -1,
+            -1,
+            9,
+            -1,
+            -1,
+            11,
+            -1,
+            -1,
+            -1,
+            -1,
+            12,
+            -1,
+            -1,
+            -1
+        ]
+    },
+    {
+        "parent": 0,
+        "stringDepth": 1,
+        "edgeStart": 9,
+        "edgeEnd": 9,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+        ]
+    },
+    {
+        "parent": 0,
+        "stringDepth": 9,
+        "edgeStart": 1,
+        "edgeEnd": 9,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+        ]
+    },
+    {
+        "parent": 0,
+        "stringDepth": 10,
+        "edgeStart": 0,
+        "edgeEnd": 9,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+        ]
+    },
+    {
+        "parent": 5,
+        "stringDepth": 2,
+        "edgeStart": 9,
+        "edgeEnd": 9,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+        ]
+    },
+    {
+        "parent": 0,
+        "stringDepth": 1,
+        "edgeStart": 8,
+        "edgeEnd": 8,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            4,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            6,
+            -1,
+            -1,
+            7,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+        ]
+    },
+    {
+        "parent": 5,
+        "stringDepth": 8,
+        "edgeStart": 3,
+        "edgeEnd": 9,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+        ]
+    },
+    {
+        "parent": 5,
+        "stringDepth": 7,
+        "edgeStart": 4,
+        "edgeEnd": 9,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+        ]
+    },
+    {
+        "parent": 9,
+        "stringDepth": 4,
+        "edgeStart": 7,
+        "edgeEnd": 9,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+        ]
+    },
+    {
+        "parent": 0,
+        "stringDepth": 1,
+        "edgeStart": 6,
+        "edgeEnd": 6,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            8,
+            -1,
+            -1,
+            -1,
+            -1,
+            10,
+            -1,
+            -1,
+            -1
+        ]
+    },
+    {
+        "parent": 9,
+        "stringDepth": 6,
+        "edgeStart": 5,
+        "edgeEnd": 9,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+        ]
+    },
+    {
+        "parent": 0,
+        "stringDepth": 3,
+        "edgeStart": 7,
+        "edgeEnd": 9,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+        ]
+    },
+    {
+        "parent": 0,
+        "stringDepth": 5,
+        "edgeStart": 5,
+        "edgeEnd": 9,
+        "children": [
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1,
+            -1
+        ]
+    }
+]
+
+console.log(arraysEqualWithDiff(arr1, arr2))

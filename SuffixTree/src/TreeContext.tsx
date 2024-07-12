@@ -1,4 +1,4 @@
-import React, {useState, useContext, createContext, ComponentProps} from "react";
+import React, {useState, useContext, createContext, ComponentProps, useEffect} from "react";
 import { NodeType } from "./Node";
 
 type TreeContextType = {
@@ -34,16 +34,94 @@ const INITIAL_STATE = {
 const TreeContext = createContext<TreeContextType>(INITIAL_STATE);
 
 export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) => {
-    const [text, setText] = useState<string>('');
-    const [suffixArray, setSuffixArray] = useState<number[]>([]);
-    const [lcpArray, setLcpArray] = useState<number[]>([]);
-    const [suffixTree, setSuffixTree] = useState<NodeType[]>([{parent:-1, stringDepth:0, edgeStart:0, edgeEnd:0, children:[1,2,3]},{parent:1, stringDepth:0, edgeStart:0, edgeEnd:0, children:[]},{parent:1, stringDepth:0, edgeStart:0, edgeEnd:0, children:[]},{parent:1, stringDepth:0, edgeStart:0, edgeEnd:0, children:[]},]);
-    const [command, setCommand] = useState<0 | 1 | 2 | 3>(0);
     const [ALPHABET, setALPHABET] = useState<string[]>([
         '$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
         'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
     ]);
-    console.log(command)
+    const [text, setText] = useState<string>('');
+    const [suffixArray, setSuffixArray] = useState<number[]>([]);
+    const [lcpArray, setLcpArray] = useState<number[]>([]);
+    const [suffixTree, setSuffixTree] = useState<NodeType[]>([{parent:-1, stringDepth:0, edgeStart:-1, edgeEnd:-1, children:Array(ALPHABET.length).fill(-1)}]);
+    const [i, setI] = useState<number>(0);
+    const [currIndex, setCurrIndex] = useState<number>(0);
+    const [lcpPrev, setLcpPrev] = useState<number>(0);
+    const [command, setCommand] = useState<0 | 1 | 2 | 3>(0);
+
+    useEffect(() => {
+        if (command !== 3){
+            return
+        }else if (i >= text.length){
+            setCommand(0);
+            return
+        }else{
+            setTimeout(() => {
+                function createLeafNode(s:string, node:NodeType, nodeIdx:number, suffix:number){
+                    return {
+                        parent:nodeIdx,
+                        stringDepth:s.length - suffix,
+                        edgeStart:suffix + node.stringDepth,
+                        edgeEnd:s.length - 1,
+                        children:Array(ALPHABET.length).fill(-1)
+                    };
+                };
+
+                function breakeNode(node:NodeType, nodeIdx:number, start:number, offset:number){
+                    return {
+                        parent:nodeIdx,
+                        stringDepth:node.stringDepth + offset,
+                        edgeStart: start,
+                        edgeEnd: start + offset - 1,
+                        children:Array(ALPHABET.length).fill(-1)
+                    };
+                };
+
+                setSuffixTree(prev => {
+                    const suffix = suffixArray[i];
+                    let currIndexCopy = currIndex;
+
+                    while (prev[currIndexCopy].stringDepth > lcpPrev){
+                        currIndexCopy = prev[currIndexCopy].parent;
+                    };
+
+                    if (prev[currIndexCopy].stringDepth === lcpPrev){
+                        const newNode = createLeafNode(text, prev[currIndexCopy], currIndexCopy, suffix);
+                        prev[currIndexCopy].children[ALPHABET.indexOf(text[newNode.edgeStart].toLowerCase())] = prev.length;
+                        setCurrIndex(prev.length);
+                        prev.push(newNode);
+                    }else{
+                        const start = suffixArray[i - 1] + prev[currIndexCopy].stringDepth;
+                        const offset = lcpPrev - prev[currIndexCopy].stringDepth;
+                        const midNode = breakeNode(prev[currIndexCopy], currIndexCopy, start, offset);
+
+                        midNode.children[ALPHABET.indexOf(text[start + offset].toLowerCase())] = prev[currIndexCopy].children[ALPHABET.indexOf(text[start].toLowerCase())];
+                        prev[prev[currIndexCopy].children[ALPHABET.indexOf(text[start].toLowerCase())]].parent = prev.length;
+                        prev[prev[currIndexCopy].children[ALPHABET.indexOf(text[start].toLowerCase())]].edgeStart += offset;
+
+                        prev[currIndexCopy].children[ALPHABET.indexOf(text[start].toLowerCase())] = prev.length;
+                        currIndexCopy = prev.length;
+                        prev.push(midNode);
+
+                        const newNode = createLeafNode(text, midNode, currIndexCopy, suffix);
+                        prev[currIndexCopy].children[ALPHABET.indexOf(text[newNode.edgeStart].toLowerCase())] = prev.length;
+
+                        setCurrIndex(prev.length);
+                        prev.push(newNode);
+                    };
+                    if (i < text.length - 1){
+                        setLcpPrev(lcpArray[i]);
+                    };
+
+                    setI(prev => prev + 1);
+                    return [...prev]
+                });
+
+
+            },2000);
+        };
+    },[command, currIndex]);
+
+    console.log(command);
+
     const VALUE = {
         text,
         setText,

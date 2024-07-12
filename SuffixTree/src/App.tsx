@@ -8,6 +8,7 @@ import { useTreeContext } from './TreeContext'
 function App() {
   const {text, suffixTree, command, setText, setCommand} = useTreeContext();
   const InputRef = useRef<HTMLInputElement>(null);
+
   function handleClick(){
     if (!InputRef.current){
       return
@@ -15,6 +16,9 @@ function App() {
     setText(InputRef.current.value);
     setCommand(1);
   };
+
+  console.log(suffixTree);
+
   return (
     <div style={{position:'relative'}}>
       {command > 0 &&
@@ -29,9 +33,9 @@ function App() {
           <input type="text" ref={InputRef}/>
           <button onClick={handleClick}>create</button>
         </div>
-        {command > 2 &&
+        {/*command > 2 &&
           <Node node={suffixTree[0]}/>
-        }
+        */}
       </div>
     </div>
   )
