@@ -74,11 +74,10 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
         return childrenRef.current;
     };
     return (
-        <div style={{width:'100%', height:'100%'}} {...props}>
+        <div style={{display:'flex', flexDirection:'column', alignItems:'center'}} {...props}>
             <div style={{
                 display:'flex',
                 alignItems:'center',
-                alignSelf:'center',
                 justifyContent:'center',
                 height:'1rem',
                 width:'1rem',
@@ -92,6 +91,7 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
             <div style={{
                 display:'flex',
                 justifyContent:'center',
+                gap:'1rem',
                 height:'100%',
                 width:'100%'
             }}>
@@ -101,14 +101,10 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
                     };
                     return prev;
                 },[]).map((v, i) => {
-                    if (v === -1){
-                        return null
-                    };
                     return <div key={`node-${node.edgeStart}-child-${i}`}
                                 style={{
                                     height:'100%',
                                     width:'100%',
-                                    transform:`rotate(${i * 10}deg)`
                                 }}
                                 ref={(elem) => {
                                     const map = getMap();
@@ -118,7 +114,7 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
                                         map.delete(elem)
                                     };
                                 }}>
-                                <svg style={{width:'100%', height:'100%' ,position:'absolute', left:0, top:0, pointerEvents:'none'}}>
+                                <svg style={{position:'absolute', top:0, left:0, width:'100%', height:'100%'}}>
                                     <line x1={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).x1 : 0}
                                           y1={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).y1 : 0}
                                           x2={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).x2 : 0}
@@ -128,21 +124,16 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
                                           stroke='black'>
                                     </line>
                                     {text.slice(v, text.length).split('').map((c, idx) => (
-                                        <text
-                                        key={`node-child-${i}-char-${c}-${idx}`}
-                                        x1={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).x1 + (idx * 10) : 0}
-                                        y1={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).y1 + (idx * 10) : 0}
-                                        x2={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).x2 + (idx * 10) : 0}
-                                        y2={nodeChildrenDimentions.get(v) ? nodeChildrenDimentions.get(v).y2 + (idx * 10) : 0}
+                                        <text key={`node-${i}-child-${c}-${idx}`}
+                                        x={nodeChildrenDimentions.get(v) ? (nodeChildrenDimentions.get(v).x1 + nodeChildrenDimentions.get(v).x2) / 2+ (idx * 10) : 0}
+                                        y={nodeChildrenDimentions.get(v) ? (nodeChildrenDimentions.get(v).y1 + nodeChildrenDimentions.get(v).y2) / 2+ (idx * 10) : 0}
                                         textAnchor="middle"
                                         alignmentBaseline="middle"
+                                        style={{ fontSize: '16px', fill: 'red' }}
                                         >
-                                            <tspan>
-                                                {c}
-                                            </tspan>
+                                            <tspan>{c}</tspan>
                                         </text>
-                                    ))
-                                    }
+                                    ))}
                                 </svg>
                                 <Node node={suffixTree[v]}/>
                            </div>
