@@ -206,7 +206,7 @@ const suffixArray = buildSuffixArray(s);
 const lcpArray = computeLCPArray(s, suffixArray);
 //console.log(lcpArray)
 const suffixTree = buildSuffixTree(s, suffixArray, lcpArray);
-//console.log(suffixTree)
+console.log(suffixTree)
 
 function deepEqualWithDiff(obj1, obj2, path = "") {
     if (obj1 === obj2) return true;
@@ -247,7 +247,7 @@ function deepEqualWithDiff(obj1, obj2, path = "") {
   }
 
 //console.log(arraysEqualWithDiff(arr1, arr2))
-
+/*
 function traverse(node){
     if (node.edgeStart !== -1){
         console.log(s.slice(node.edgeStart, node.edgeEnd + 1));
@@ -258,7 +258,7 @@ function traverse(node){
         };
     };
 }
-
+*/
 //traverse(suffixTree[0])
 
 /*
@@ -267,4 +267,4 @@ for (let i = 1; i < suffixTree.length; i++){
 };
 */
 
-console.log(arraysEqualWithDiff(arr1, arr2))
+//console.log(arraysEqualWithDiff(arr1, arr2))

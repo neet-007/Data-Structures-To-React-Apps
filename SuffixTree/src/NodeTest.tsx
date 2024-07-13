@@ -1,4 +1,4 @@
-import React, { ComponentProps, useEffect, useRef, useState } from 'react'
+import React, { ComponentProps, forwardRef, useEffect, useRef, useState } from 'react'
 import { useTreeContext } from './TreeContext';
 
 const CHARDIST = 30;
@@ -27,9 +27,10 @@ type RectType = {
 
 interface NodeProps extends ComponentProps<'div'>{
     node:NodeType;
+    adjustedHeight?:number;
 };
 
-const Node:React.FC<NodeProps> = ({node, ...props}) => {
+const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, ...props}, ref) => {
     const {text, suffixTree, ALPHABET} = useTreeContext();
     const nodeRef = useRef<HTMLDivElement | null>(null);
     const childrenRef = useRef<Map<any, any> | null>(null);
@@ -56,7 +57,7 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
         if (nodeRef.current){
             const map = getMap();
             const arr = Array(ALPHABET.length).fill({x1:Infinity, y1:Infinity, x2:Infinity, y2:Infinity, width:Infinity, height:Infinity, angle:Infinity});
-            const parentRect = nodeRef.current.getBoundingClientRect();
+            const parentRect = nodeRef.current.children[0].getBoundingClientRect();
             map.forEach((val, key) => {
                 if (!val){
                     arr[key] = {
@@ -71,9 +72,9 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
                 }else{
                     arr[key] = {
                         x1:parentRect.x + parentRect.width - (GAP * CONVERTE_TO_PX) / 2,
-                        y1:parentRect.y + parentRect.height / 2,
+                        y1:parentRect.y + parentRect.height - (GAP * CONVERTE_TO_PX) / 2,
                         x2:val.x + val.width - (GAP * CONVERTE_TO_PX) / 2,
-                        y2:val.y + val.height / 2,
+                        y2:val.y + val.height - (GAP * CONVERTE_TO_PX) / 2,
                         width:val.width,
                         height:val.height,
                         angle:Math.atan2((val.y - parentRect.y), (val.x - parentRect.x)) * (180/Math.PI)
@@ -92,19 +93,19 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
         return childrenRef.current;
     };
     return (
-        <div style={{display:'flex', flexDirection:'column', alignItems:'center'}} {...props}>
+        <div ref={nodeRef} style={{display:'flex', flexDirection:'column', alignItems:'center', marginTop:`${adjustedHeight}px`, width:'100%'}} {...props}>
             <div style={{
                 display:'flex',
                 alignItems:'center',
                 justifyContent:'center',
-                height:'1rem',
-                width:'1rem',
+                height:'0.5rem',
+                width:'0.5rem',
                 padding:'0.25rem',
                 border:'1px solid black',
                 borderRadius:'50%',
                 backgroundColor:'white',
             }}
-            ref={nodeRef}
+            ref={ref}
             ></div>
             <div style={{
                 display:'flex',
@@ -113,54 +114,45 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
                 height:'100%',
                 width:'100%'
             }}>
-                {node.children.reduce((prev:number[], curr:number) => {
-                    if (curr !== -1){
-                        prev.push(curr);
-                    };
-                    return prev;
-                },[]).map((v, i) => {
-                    return <div key={`node-${node.edgeStart}-child-${i}`}
-                                style={{
-                                    height:'100%',
-                                    width:'100%',
-                                    marginTop:`${(text.length - v) * CHARDIST}px`
-                                }}
-                                ref={(elem) => {
-                                    const map = getMap();
-                                    if (elem){
-                                        map.set(v, elem.getBoundingClientRect())
-                                    }else{
-                                        map.delete(elem)
-                                    };
-                                }}>
+                {(() => {
+                    const children = node.children.reduce((prev:number[], curr:number) => {
+                        if (curr !== -1){
+                            prev.push(curr);
+                        };
+                        return prev
+                    },[]);
+
+                    return children.map((v, i) => {
+                        return <div key={`node-${node.edgeStart}-child-${i}`}
+                        style={{
+                            height:'100%',
+                            width:'100%',
+                        }}>
                                 <svg style={{position:'absolute', top:0, left:0, width:'100%', height:'100%', zIndex:-1}}>
                                     <line x1={nodeChildrenDimentions[v].x1 !== Infinity ? nodeChildrenDimentions[v].x1 : 0}
-                                          y1={nodeChildrenDimentions[v].y1 !== Infinity ? nodeChildrenDimentions[v].y1 : 0}
-                                          x2={nodeChildrenDimentions[v].x2 !== Infinity ? nodeChildrenDimentions[v].x2 : 0}
-                                          y2={nodeChildrenDimentions[v].y2 !== Infinity ? nodeChildrenDimentions[v].y2 : 0}
-                                          height={nodeChildrenDimentions[v].height !== Infinity ? nodeChildrenDimentions[v].height : 0}
-                                          width={nodeChildrenDimentions[v].width !== Infinity ? nodeChildrenDimentions[v].width : 0}
-                                          stroke='black'>
+                                        y1={nodeChildrenDimentions[v].y1 !== Infinity ? nodeChildrenDimentions[v].y1 : 0}
+                                        x2={nodeChildrenDimentions[v].x2 !== Infinity ? nodeChildrenDimentions[v].x2 : 0}
+                                        y2={nodeChildrenDimentions[v].y2 !== Infinity ? nodeChildrenDimentions[v].y2 : 0}
+                                        height={nodeChildrenDimentions[v].height !== Infinity ? nodeChildrenDimentions[v].height : 0}
+                                        width={nodeChildrenDimentions[v].width !== Infinity ? nodeChildrenDimentions[v].width : 0}
+                                        stroke='black'>
                                     </line>
-                                    {text.slice(suffixTree[v].edgeStart, suffixTree[v].edgeEnd + 1).split('').map((c, idx) => (
-                                        <text key={`node-${i}-child-${c}-${idx}`}
-                                        x={nodeChildrenDimentions[v].x1 !== Infinity ? (nodeChildrenDimentions[v].x1 + nodeChildrenDimentions[v].x2 + (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.cos(nodeChildrenDimentions[v].angle * Math.PI / 180)) : 0}
-                                        y={nodeChildrenDimentions[v].y1 !== Infinity ? (nodeChildrenDimentions[v].y1 - ((suffixTree[v].edgeEnd + 1 - suffixTree[v].edgeStart) * CHARDIST) + (GAP * CONVERTE_TO_PX) + nodeChildrenDimentions[v].y2) / 2 + (idx * CHARDIST * Math.sin(nodeChildrenDimentions[v].angle * Math.PI / 180)): 0}
-                                        textAnchor="middle"
-                                        alignmentBaseline="middle"
-                                        style={{ fontSize: '16px', fill: 'red' }}
-                                        >
-                                            <tspan>{c}</tspan>
-                                        </text>
-                                    ))}
                                 </svg>
-                                <Node node={suffixTree[v]}/>
-                           </div>
-                })
-            }
+                            <NodeTest node={suffixTree[v]} adjustedHeight={((suffixTree[children[Math.floor(children.length / 2)]].edgeEnd + 1 - suffixTree[children[Math.floor(children.length / 2)]].edgeStart) * CHARDIST)}
+                                        ref={(elem) => {
+                                            const map = getMap();
+                                            if (elem){
+                                                map.set(v, elem.getBoundingClientRect())
+                                            }else{
+                                                map.delete(elem)
+                                            };
+                                        }}/>
+                        </div>
+                    })
+                })()}
             </div>
         </div>
     );
-};
+});
 
-export default Node
+export default NodeTest
