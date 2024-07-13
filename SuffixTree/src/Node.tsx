@@ -12,7 +12,9 @@ export type NodeType = {
     stringDepth:number,
     edgeStart:number,
     edgeEnd:number,
-    children:number[]
+    children:number[],
+    nodeClassName:'heighlited-node' | 'found-node' | '',
+    charClassName:'heighlited-char' | 'found-char' | ''
 };
 
 type RectType = {

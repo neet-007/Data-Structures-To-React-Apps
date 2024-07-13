@@ -12,7 +12,9 @@ export type NodeType = {
     stringDepth:number,
     edgeStart:number,
     edgeEnd:number,
-    children:number[]
+    children:number[],
+    nodeClassName:'heighlited-node' | 'found-node' | '',
+    charClassName:'heighlited-char' | 'found-char' | ''
 };
 
 type RectType = {
@@ -71,10 +73,10 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                     };
                 }else{
                     arr[key] = {
-                        x1:parentRect.x + parentRect.width - (GAP * CONVERTE_TO_PX) / 2,
-                        y1:parentRect.y + parentRect.height - (GAP * CONVERTE_TO_PX) / 2,
-                        x2:val.x + val.width - (GAP * CONVERTE_TO_PX) / 2,
-                        y2:val.y + val.height - (GAP * CONVERTE_TO_PX) / 2,
+                        x1:parentRect.x + window.scrollX + parentRect.width - (GAP * CONVERTE_TO_PX) / 2,
+                        y1:parentRect.y + window.scrollY + parentRect.height - (GAP * CONVERTE_TO_PX) / 2,
+                        x2:val.x + window.scrollX + val.width - (GAP * CONVERTE_TO_PX) / 2,
+                        y2:val.y + window.scrollY + val.height - (GAP * CONVERTE_TO_PX) / 2,
                         width:val.width,
                         height:val.height,
                         angle:Math.atan2((val.y - parentRect.y), (val.x - parentRect.x)) * (180/Math.PI)
@@ -115,6 +117,9 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                 width:'100%'
             }}>
                 {(() => {
+                    if (!node){
+                        return null
+                    };
                     const children = node.children.reduce((prev:number[], curr:number) => {
                         if (curr !== -1){
                             prev.push(curr);

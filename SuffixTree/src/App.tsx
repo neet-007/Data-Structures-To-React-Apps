@@ -22,19 +22,19 @@ function App() {
 
   return (
     <div style={{position:'relative'}}>
-      {/*command > 0 &&
+      {command > 0 &&
         <SuffixArray/>
-      */}
-      {/*command > 1 &&
+      }
+      {command > 1 &&
         <LcpArray/>
-      */}
+      }
 
-      <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
         <div>
           <input type="text" ref={InputRef}/>
           <button onClick={handleClick}>create</button>
         </div>
-        {
+      <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
+        {command > 2 &&
           <NodeTest node={suffixTree[0]} adjustedHeight={0}/>
         }
       </div>

@@ -41,200 +41,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
     const [text, setText] = useState<string>('acacbacbacc');
     const [suffixArray, setSuffixArray] = useState<number[]>([]);
     const [lcpArray, setLcpArray] = useState<number[]>([]);
-    const [suffixTree, setSuffixTree] = useState<NodeType[]>([
-        {
-          parent: -1,
-          stringDepth: 0,
-          edgeStart: -1,
-          edgeEnd: -1,
-          children: [
-            -1,  2,  8, 10, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 2,
-          stringDepth: 11,
-          edgeStart: 2,
-          edgeEnd: 10,
-          children: [
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 0,
-          stringDepth: 2,
-          edgeStart: 0,
-          edgeEnd: 1,
-          children: [
-            -1,  1,  4,  6, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 4,
-          stringDepth: 9,
-          edgeStart: 7,
-          edgeEnd: 10,
-          children: [
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 2,
-          stringDepth: 5,
-          edgeStart: 4,
-          edgeEnd: 6,
-          children: [
-            -1, -1,  3,  5, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 4,
-          stringDepth: 6,
-          edgeStart: 10,
-          edgeEnd: 10,
-          children: [
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 2,
-          stringDepth: 3,
-          edgeStart: 10,
-          edgeEnd: 10,
-          children: [
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 8,
-          stringDepth: 7,
-          edgeStart: 7,
-          edgeEnd: 10,
-          children: [
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 0,
-          stringDepth: 3,
-          edgeStart: 4,
-          edgeEnd: 6,
-          children: [
-            -1, -1,  7,  9, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 8,
-          stringDepth: 4,
-          edgeStart: 10,
-          edgeEnd: 10,
-          children: [
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 0,
-          stringDepth: 1,
-          edgeStart: 10,
-          edgeEnd: 10,
-          children: [
-            -1, 11, 13, 15, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 10,
-          stringDepth: 10,
-          edgeStart: 2,
-          edgeEnd: 10,
-          children: [
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 13,
-          stringDepth: 8,
-          edgeStart: 7,
-          edgeEnd: 10,
-          children: [
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 10,
-          stringDepth: 4,
-          edgeStart: 4,
-          edgeEnd: 6,
-          children: [
-            -1, -1, 12, 14, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 13,
-          stringDepth: 5,
-          edgeStart: 10,
-          edgeEnd: 10,
-          children: [
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        },
-        {
-          parent: 10,
-          stringDepth: 2,
-          edgeStart: 10,
-          edgeEnd: 10,
-          children: [
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1
-          ]
-        }
-      ]);
+    const [suffixTree, setSuffixTree] = useState<NodeType[]>([{parent:-1, stringDepth:0, edgeStart:-1, edgeEnd:-1, children:Array(ALPHABET.length).fill(-1), charClassName:'', nodeClassName:''}]);
     const [i, setI] = useState<number>(0);
     const [currIndex, setCurrIndex] = useState<number>(0);
     const [lcpPrev, setLcpPrev] = useState<number>(0);
@@ -254,8 +61,10 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         stringDepth:s.length - suffix,
                         edgeStart:suffix + node.stringDepth,
                         edgeEnd:s.length - 1,
-                        children:Array(ALPHABET.length).fill(-1)
-                    };
+                        children:Array(ALPHABET.length).fill(-1),
+                        nodeClassName:'',
+                        charClassName:''
+                    } as NodeType;
                 };
 
                 function breakeNode(node:NodeType, nodeIdx:number, start:number, offset:number){
@@ -264,8 +73,10 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         stringDepth:node.stringDepth + offset,
                         edgeStart: start,
                         edgeEnd: start + offset - 1,
-                        children:Array(ALPHABET.length).fill(-1)
-                    };
+                        children:Array(ALPHABET.length).fill(-1),
+                        nodeClassName:'',
+                        charClassName:''
+                    } as NodeType;
                 };
 
                 setSuffixTree(prev => {
