@@ -35,7 +35,7 @@ function App() {
           <button onClick={handleClick}>create</button>
         </div>
         {
-          <NodeTest node={suffixTree[0]}/>
+          <NodeTest node={suffixTree[0]} adjustedHeight={0}/>
         }
       </div>
     </div>

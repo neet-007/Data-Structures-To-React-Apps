@@ -1,0 +1,12 @@
+.heighlited-char{
+    fill: blueviolet;
+};
+.found-char{
+    fill: aquamarine;
+};
+.heighlited-node{
+    background-color: blueviolet;
+};
+.found-node{
+    background-color: aquamarine;
+};

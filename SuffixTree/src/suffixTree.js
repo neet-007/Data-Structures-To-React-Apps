@@ -201,7 +201,7 @@ function buildSuffixTree(s, suffixArray, lcpArray){
     return suffixTree
 };
 
-const s = 'helloworld';
+const s = 'acacbacbacc';
 const suffixArray = buildSuffixArray(s);
 const lcpArray = computeLCPArray(s, suffixArray);
 //console.log(lcpArray)

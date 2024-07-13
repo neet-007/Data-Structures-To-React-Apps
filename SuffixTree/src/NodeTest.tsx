@@ -1,4 +1,4 @@
-import React, { ComponentProps, forwardRef, useEffect, useRef, useState } from 'react'
+import { ComponentProps, forwardRef, useEffect, useRef, useState } from 'react'
 import { useTreeContext } from './TreeContext';
 
 const CHARDIST = 30;
@@ -27,7 +27,7 @@ type RectType = {
 
 interface NodeProps extends ComponentProps<'div'>{
     node:NodeType;
-    adjustedHeight?:number;
+    adjustedHeight:number;
 };
 
 const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, ...props}, ref) => {
@@ -121,7 +121,7 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                         };
                         return prev
                     },[]);
-
+                    const adjH = children.length > 0 ? ((suffixTree[children[Math.floor(children.length / 2)]].edgeEnd + 1 - suffixTree[children[Math.floor(children.length / 2)]].edgeStart) * CHARDIST) : 0;
                     return children.map((v, i) => {
                         return <div key={`node-${node.edgeStart}-child-${i}`}
                         style={{
@@ -137,8 +137,20 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                                         width={nodeChildrenDimentions[v].width !== Infinity ? nodeChildrenDimentions[v].width : 0}
                                         stroke='black'>
                                     </line>
+                                    {text.slice(suffixTree[v].edgeStart, suffixTree[v].edgeEnd + 1).split('').map((c, idx) => (
+                                        <text key={`node-${i}-child-${c}-${idx}`}
+                                        x={nodeChildrenDimentions[v].x1 !== Infinity ? (nodeChildrenDimentions[v].x1 + nodeChildrenDimentions[v].x2 + (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.cos(nodeChildrenDimentions[v].angle * Math.PI / 180)) : 0}
+                                        y={nodeChildrenDimentions[v].y1 !== Infinity ? (nodeChildrenDimentions[v].y1 + nodeChildrenDimentions[v].y2 - (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.sin(nodeChildrenDimentions[v].angle * Math.PI / 180)): 0}
+                                        textAnchor="middle"
+                                        alignmentBaseline="middle"
+                                        className={idx === 1 ? 'heighlited-char' : ''}
+                                        style={{fontSize:'1.2em'}}
+                                        >
+                                            <tspan>{c}</tspan>
+                                        </text>
+                                    ))}
                                 </svg>
-                            <NodeTest node={suffixTree[v]} adjustedHeight={((suffixTree[children[Math.floor(children.length / 2)]].edgeEnd + 1 - suffixTree[children[Math.floor(children.length / 2)]].edgeStart) * CHARDIST)}
+                            <NodeTest node={suffixTree[v]} adjustedHeight={adjH > 150 ? adjH : 150}
                                         ref={(elem) => {
                                             const map = getMap();
                                             if (elem){
