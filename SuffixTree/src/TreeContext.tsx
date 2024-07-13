@@ -7,13 +7,17 @@ type TreeContextType = {
     suffixArray:number[];
     lcpArray:number[];
     suffixTree:NodeType[];
-    command:0 | 1 | 2 | 3 | 4;
+    suffix:number;
+    command:0 | 1 | 2 | 3 | 4 | 5;
+    query:string;
     setSuffixArray: React.Dispatch<React.SetStateAction<number[]>>;
     setLcpArray: React.Dispatch<React.SetStateAction<number[]>>;
     setSuffixTree: React.Dispatch<React.SetStateAction<NodeType[]>>;
     ALPHABET:string[];
     setALPHABET: React.Dispatch<React.SetStateAction<string[]>>;
-    setCommand:React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3 | 4>>;
+    setCommand:React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3 | 4 | 5>>;
+    setSuffix:React.Dispatch<React.SetStateAction<number>>;
+    setQuery:React.Dispatch<React.SetStateAction<string>>;
 };
 
 const INITIAL_STATE = {
@@ -22,6 +26,8 @@ const INITIAL_STATE = {
     suffixArray:[],
     lcpArray:[],
     suffixTree:[],
+    suffix:0,
+    query:'',
     setSuffixArray:() => {},
     setLcpArray:() => {},
     setSuffixTree:() => {},
@@ -29,6 +35,8 @@ const INITIAL_STATE = {
     setALPHABET:() => {},
     command:0,
     setCommand:() => {},
+    setSuffix:() => {},
+    setQuery:() => {},
 } as TreeContextType;
 
 const TreeContext = createContext<TreeContextType>(INITIAL_STATE);
@@ -38,14 +46,16 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
         '$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
         'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
     ]);
-    const [text, setText] = useState<string>('acacbacbacc');
+    const [text, setText] = useState<string>('');
     const [suffixArray, setSuffixArray] = useState<number[]>([]);
     const [lcpArray, setLcpArray] = useState<number[]>([]);
     const [suffixTree, setSuffixTree] = useState<NodeType[]>([{parent:-1, stringDepth:0, edgeStart:-1, edgeEnd:-1, children:Array(ALPHABET.length).fill(-1), charClassName:'', nodeClassName:''}]);
+    const [suffix, setSuffix] = useState<number>(0);
     const [i, setI] = useState<number>(0);
     const [currIndex, setCurrIndex] = useState<number>(0);
     const [lcpPrev, setLcpPrev] = useState<number>(0);
-    const [command, setCommand] = useState<0 | 1 | 2 | 3 | 4>(0);
+    const [command, setCommand] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
+    const [query, setQuery] = useState<string>('');
 
     useEffect(() => {
         if (command !== 3){
@@ -80,7 +90,6 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                 };
 
                 setSuffixTree(prev => {
-                    const suffix = suffixArray[i];
                     let currIndexCopy = currIndex;
 
                     while (prev[currIndexCopy].stringDepth > lcpPrev){
@@ -115,7 +124,10 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         setLcpPrev(lcpArray[i]);
                     };
 
-                    setI(prev => prev + 1);
+                    setI(prev => {
+                        setSuffix(suffixArray[prev + 1]);
+                        return prev + 1;
+                    });
                     return [...prev]
                 });
 
@@ -128,17 +140,21 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
 
     const VALUE = {
         text,
-        setText,
         suffixArray,
         lcpArray,
         suffixTree,
+        suffix,
+        query,
+        setText,
         setSuffixArray,
         setLcpArray,
         setSuffixTree,
         ALPHABET,
         setALPHABET,
         command,
-        setCommand
+        setCommand,
+        setSuffix,
+        setQuery
     };
     return (
         <TreeContext.Provider value={VALUE}>

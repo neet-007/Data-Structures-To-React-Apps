@@ -7,15 +7,24 @@ import { useTreeContext } from './TreeContext'
 import NodeTest from './NodeTest';
 
 function App() {
-  const {text, suffixTree, command, setText, setCommand} = useTreeContext();
+  const {text, suffixTree, command, suffix, query, setText, setCommand, setQuery} = useTreeContext();
   const InputRef = useRef<HTMLInputElement>(null);
+  const queryRef = useRef<HTMLInputElement>(null);
 
-  function handleClick(){
+  function handleClickInput(){
     if (!InputRef.current){
       return
     };
     setText(InputRef.current.value);
     setCommand(1);
+  };
+
+  function handleClickQuery(){
+    if (!queryRef.current){
+      return
+    };
+    setQuery(queryRef.current.value);
+    setCommand(5);
   };
 
   console.log(suffixTree);
@@ -29,9 +38,21 @@ function App() {
         <LcpArray/>
       }
 
-        <div>
-          <input type="text" ref={InputRef}/>
-          <button onClick={handleClick}>create</button>
+        <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+          <div>
+            <input type="text" ref={InputRef}/>
+            <button disabled={command > 0} onClick={handleClickInput}>create</button>
+          </div>
+            <p>text: {text}</p>
+            <p>current suffix: {text.slice(suffix, text.length)}</p>
+        </div>
+        <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+          <div>
+            <input type="text" ref={queryRef}/>
+            <button disabled={command <= 3} onClick={handleClickQuery}>query</button>
+          </div>
+            <p>query: {query}</p>
+            <p>results: {text.slice(suffix, text.length)}</p>
         </div>
       <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
         {command > 2 &&
