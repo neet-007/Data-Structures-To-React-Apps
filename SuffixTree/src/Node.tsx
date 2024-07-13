@@ -51,7 +51,7 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
     useEffect(() => {
         if (nodeRef.current){
             const map = getMap();
-            const arr = Array(ALPHABET.length).fill(-1);
+            const arr = Array(ALPHABET.length).fill({x1:Infinity, y1:Infinity, x2:Infinity, y2:Infinity, width:Infinity, height:Infinity, angle:Infinity});
             const parentRect = nodeRef.current.getBoundingClientRect();
             map.forEach((val, key) => {
                 if (!val){
@@ -61,7 +61,7 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
                         x2:0,
                         y2:0,
                         width:0,
-                        heigth:0,
+                        height:0,
                         angle:0
                     };
                 }else{
@@ -79,7 +79,7 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
 
             setNodeChildrenDimentions(arr);
         };
-    },[windowDimentions.height, windowDimentions.width]);
+    },[windowDimentions.height, windowDimentions.width, suffixTree.length]);
 
     function getMap(){
         if (!childrenRef.current){
@@ -130,18 +130,18 @@ const Node:React.FC<NodeProps> = ({node, ...props}) => {
                                     };
                                 }}>
                                 <svg style={{position:'absolute', top:0, left:0, width:'100%', height:'100%', zIndex:-1}}>
-                                    <line x1={nodeChildrenDimentions[v] ? nodeChildrenDimentions[v].x1 : 0}
-                                          y1={nodeChildrenDimentions[v] ? nodeChildrenDimentions[v].y1 : 0}
-                                          x2={nodeChildrenDimentions[v] ? nodeChildrenDimentions[v].x2 : 0}
-                                          y2={nodeChildrenDimentions[v] ? nodeChildrenDimentions[v].y2 : 0}
-                                          height={nodeChildrenDimentions[v] ? nodeChildrenDimentions[v].height : 0}
-                                          width={nodeChildrenDimentions[v] ? nodeChildrenDimentions[v].width : 0}
+                                    <line x1={nodeChildrenDimentions[v].x1 !== Infinity ? nodeChildrenDimentions[v].x1 : 0}
+                                          y1={nodeChildrenDimentions[v].y1 !== Infinity ? nodeChildrenDimentions[v].y1 : 0}
+                                          x2={nodeChildrenDimentions[v].x2 !== Infinity ? nodeChildrenDimentions[v].x2 : 0}
+                                          y2={nodeChildrenDimentions[v].y2 !== Infinity ? nodeChildrenDimentions[v].y2 : 0}
+                                          height={nodeChildrenDimentions[v].height !== Infinity ? nodeChildrenDimentions[v].height : 0}
+                                          width={nodeChildrenDimentions[v].width !== Infinity ? nodeChildrenDimentions[v].width : 0}
                                           stroke='black'>
                                     </line>
-                                    {text.slice(v, text.length).split('').map((c, idx) => (
+                                    {text.slice(suffixTree[v].edgeStart, suffixTree[v].edgeEnd + 1).split('').map((c, idx) => (
                                         <text key={`node-${i}-child-${c}-${idx}`}
-                                        x={nodeChildrenDimentions[v] ? (nodeChildrenDimentions[v].x1 + nodeChildrenDimentions[v].x2) / 2 + (idx * CHARDIST * Math.cos(nodeChildrenDimentions[v].angle * Math.PI / 180)) : 0}
-                                        y={nodeChildrenDimentions[v] ? (nodeChildrenDimentions[v].y1 - ((text.length - v) * CHARDIST) + nodeChildrenDimentions[v].y2) / 2 + idx * CHARDIST * Math.sin(nodeChildrenDimentions[v].angle * Math.PI / 180): 0}
+                                        x={nodeChildrenDimentions[v].x1 !== Infinity ? (nodeChildrenDimentions[v].x1 + nodeChildrenDimentions[v].x2) / 2 + (idx * CHARDIST * Math.cos(nodeChildrenDimentions[v].angle * Math.PI / 180)) : 0}
+                                        y={nodeChildrenDimentions[v].y1 !== Infinity ? (nodeChildrenDimentions[v].y1 - ((suffixTree[v].edgeEnd + 1 - suffixTree[v].edgeStart) * CHARDIST) + nodeChildrenDimentions[v].y2) / 2 + idx * CHARDIST * Math.sin(nodeChildrenDimentions[v].angle * Math.PI / 180): 0}
                                         textAnchor="middle"
                                         alignmentBaseline="middle"
                                         style={{ fontSize: '16px', fill: 'red' }}

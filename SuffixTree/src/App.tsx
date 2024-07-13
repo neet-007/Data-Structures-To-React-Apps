@@ -33,9 +33,9 @@ function App() {
           <input type="text" ref={InputRef}/>
           <button onClick={handleClick}>create</button>
         </div>
-        {/*command > 2 &&
+        {command > 2 &&
           <Node node={suffixTree[0]}/>
-        */}
+        }
       </div>
     </div>
   )

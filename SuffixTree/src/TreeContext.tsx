@@ -7,13 +7,13 @@ type TreeContextType = {
     suffixArray:number[];
     lcpArray:number[];
     suffixTree:NodeType[];
-    command:0 | 1 | 2 | 3;
+    command:0 | 1 | 2 | 3 | 4;
     setSuffixArray: React.Dispatch<React.SetStateAction<number[]>>;
     setLcpArray: React.Dispatch<React.SetStateAction<number[]>>;
     setSuffixTree: React.Dispatch<React.SetStateAction<NodeType[]>>;
     ALPHABET:string[];
     setALPHABET: React.Dispatch<React.SetStateAction<string[]>>;
-    setCommand:React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3>>;
+    setCommand:React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3 | 4>>;
 };
 
 const INITIAL_STATE = {
@@ -45,13 +45,13 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
     const [i, setI] = useState<number>(0);
     const [currIndex, setCurrIndex] = useState<number>(0);
     const [lcpPrev, setLcpPrev] = useState<number>(0);
-    const [command, setCommand] = useState<0 | 1 | 2 | 3>(0);
+    const [command, setCommand] = useState<0 | 1 | 2 | 3 | 4>(0);
 
     useEffect(() => {
         if (command !== 3){
             return
         }else if (i >= text.length){
-            setCommand(0);
+            setCommand(4);
             return
         }else{
             setTimeout(() => {
