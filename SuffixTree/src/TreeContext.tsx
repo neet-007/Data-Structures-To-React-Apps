@@ -155,12 +155,22 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                 setSuffixTree(prevTree => {
                     if (currNodeIndex === -1){
                         setQuery(prevQ => {
-                            prevQ[currQueryIndex].className = 'unmatching-char';
+                            if (currQueryIndex === query.length - 1){
+                                prevQ[currQueryIndex].className = 'unmatching-char';
+                            }else{
+                                setCurrQueryIndex(prev => {
+                                    prevQ[prev + 1].className = 'unmatching-char';
+                                    return prev + 1
+                                });
+                            };
                             return [...prevQ]
                         });
+                        setCurrNodeIndex(0);
                         setCommand(500);
                     }else if (command === 500){
-                        prevTree[currNodeIndex].nodeClassName = '';
+                        if (currNodeIndex !== -1){
+                            prevTree[currNodeIndex].nodeClassName = '';
+                        };
                         setQuery(prevQ => {
                             prevQ[currQueryIndex].className = '';
                             return [...prevQ]
@@ -169,7 +179,14 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         setCurrOffest(0);
                         setCurrQueryIndex(0);
                         setCommand(4);
+                    }else if (currNodeIndex === 0){
+                        prevTree[currNodeIndex].nodeClassName = '';
+                        if(prevTree[currNodeIndex].children[ALPHABET.indexOf(query[currQueryIndex + 1].char)] !== -1){
+                            prevTree[prevTree[currNodeIndex].children[ALPHABET.indexOf(query[currQueryIndex + 1].char)]].nodeClassName = 'heighlited-node';
+                        };
+                        setCurrNodeIndex(prev => prevTree[prev].children[ALPHABET.indexOf(query[currQueryIndex + 1].char)]);
                     }else if (text[prevTree[currNodeIndex].edgeStart + currOffset] === query[currQueryIndex].char ){
+                        console.log('here')
                         if (prevTree[currNodeIndex].edgeStart + currOffset === prevTree[currNodeIndex].edgeEnd){
                             if (currQueryIndex === query.length - 1){
                                 setQuery(prevQ => {
@@ -185,7 +202,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                                     return [...prevQ]
                                 });
                                 prevTree[currNodeIndex].nodeClassName = '';
-                                prevTree[currNodeIndex + 1].nodeClassName = 'heighlited-node';
+                                prevTree[prevTree[currNodeIndex].children[ALPHABET.indexOf(query[currQueryIndex + 1].char)]].nodeClassName = 'heighlited-node';
                                 setCurrNodeIndex(prev => prevTree[prev].children[ALPHABET.indexOf(query[currQueryIndex + 1].char)]);
                                 setCurrOffest(0);
                                 setCurrQueryIndex(prev => prev + 1);
@@ -210,7 +227,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         };
                     }else{
                         setQuery(prevQ => {
-                            prevQ[currNodeIndex].className = 'unmatching-char';
+                            prevQ[currQueryIndex].className = 'unmatching-char';
                             return [...prevQ]
                         });
                         prevTree[currNodeIndex].nodeClassName = 'unmatching-node';
@@ -229,7 +246,6 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
         setCommand(5);
         setSuffixTree(prev => {
             prev[0].nodeClassName = 'heighlited-node';
-            setCurrNodeIndex(prev[0].children[ALPHABET.indexOf(q[0].char)]);
             return [...prev]
         });
     }

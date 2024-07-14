@@ -32,7 +32,7 @@ const Query:React.FC<QueryProps> = ({...props}) => {
         <div {...props} style={{display:'flex', alignItems:'center', gap:'1rem'}}>
         <div>
         <input type="text" ref={queryRef}/>
-        <button disabled={command <= 3} onClick={handleClickQuery}>query</button>
+        <button disabled={command !== 4} onClick={handleClickQuery}>query</button>
         </div>
         <div>query: {query.map((v, i) => (
             <span key={`query-text-${v.char}-${i}`} className={v.className}>{v.char}</span>

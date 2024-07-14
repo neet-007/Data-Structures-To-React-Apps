@@ -1,21 +1,21 @@
 .heighlited-char{
     fill: blueviolet;
     color: blueviolet;
-};
+}
 .unmatching-char{
     fill: red;
     color: red;
-};
+}
 .found-char{
     fill: aquamarine;
     color: aquamarine;
-};
+}
 .heighlited-node{
     background-color: blueviolet;
-};
+}
 .unmatching-node{
     background-color: red;
 }
 .found-node{
     background-color: aquamarine;
-};
+}

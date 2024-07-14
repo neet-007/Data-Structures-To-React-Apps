@@ -38,9 +38,8 @@ function App() {
             <p>text: {text}</p>
             <p>current suffix: {text.slice(suffix, text.length)}</p>
         </div>
-        {command > 3 &&
+
           <Query/>
-        }
 
       <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
         {command > 2 &&
