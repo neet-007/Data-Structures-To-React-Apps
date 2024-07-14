@@ -13,8 +13,8 @@ export type NodeType = {
     edgeStart:number,
     edgeEnd:number,
     children:number[],
-    nodeClassName:'heighlited-node' | 'found-node' | '',
-    charClassName:'heighlited-char' | 'found-char' | ''
+    nodeClassName:'heighlited-node' | 'found-node' | 'unmatching-node' | '',
+    charClassName:'heighlited-char' | 'found-char' | 'unmatching-char' | '',
 };
 
 type RectType = {

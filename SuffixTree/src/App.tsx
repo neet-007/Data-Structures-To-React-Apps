@@ -5,11 +5,11 @@ import SuffixArray from './SuffixArray'
 import Node from './Node';
 import { useTreeContext } from './TreeContext'
 import NodeTest from './NodeTest';
+import Query from './Query';
 
 function App() {
-  const {text, suffixTree, command, suffix, query, setText, setCommand, setQuery} = useTreeContext();
+  const {text, suffixTree, command, suffix, setText, setCommand} = useTreeContext();
   const InputRef = useRef<HTMLInputElement>(null);
-  const queryRef = useRef<HTMLInputElement>(null);
 
   function handleClickInput(){
     if (!InputRef.current){
@@ -17,14 +17,6 @@ function App() {
     };
     setText(InputRef.current.value);
     setCommand(1);
-  };
-
-  function handleClickQuery(){
-    if (!queryRef.current){
-      return
-    };
-    setQuery(queryRef.current.value);
-    setCommand(5);
   };
 
   console.log(suffixTree);
@@ -46,14 +38,10 @@ function App() {
             <p>text: {text}</p>
             <p>current suffix: {text.slice(suffix, text.length)}</p>
         </div>
-        <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
-          <div>
-            <input type="text" ref={queryRef}/>
-            <button disabled={command <= 3} onClick={handleClickQuery}>query</button>
-          </div>
-            <p>query: {query}</p>
-            <p>results: {text.slice(suffix, text.length)}</p>
-        </div>
+        {command > 3 &&
+          <Query/>
+        }
+
       <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
         {command > 2 &&
           <NodeTest node={suffixTree[0]} adjustedHeight={0}/>

@@ -13,8 +13,8 @@ export type NodeType = {
     edgeStart:number,
     edgeEnd:number,
     children:number[],
-    nodeClassName:'heighlited-node' | 'found-node' | '',
-    charClassName:'heighlited-char' | 'found-char' | ''
+    nodeClassName:'heighlited-node' | 'found-node' | 'unmatching-node' | '',
+    charClassName:'heighlited-char' | 'found-char' | 'unmatching-char' | '',
 };
 
 type RectType = {
@@ -105,8 +105,9 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                 padding:'0.25rem',
                 border:'1px solid black',
                 borderRadius:'50%',
-                backgroundColor:'white',
+                backgroundColor:`${node.nodeClassName === '' ? '': 'white'}`,
             }}
+            className={node.nodeClassName}
             ref={ref}
             ></div>
             <div style={{

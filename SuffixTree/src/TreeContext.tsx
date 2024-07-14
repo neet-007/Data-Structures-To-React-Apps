@@ -1,5 +1,6 @@
 import React, {useState, useContext, createContext, ComponentProps, useEffect} from "react";
 import { NodeType } from "./Node";
+import { QueryType } from "./Query";
 
 type TreeContextType = {
     text:string,
@@ -9,15 +10,16 @@ type TreeContextType = {
     suffixTree:NodeType[];
     suffix:number;
     command:0 | 1 | 2 | 3 | 4 | 5;
-    query:string;
-    setSuffixArray: React.Dispatch<React.SetStateAction<number[]>>;
-    setLcpArray: React.Dispatch<React.SetStateAction<number[]>>;
-    setSuffixTree: React.Dispatch<React.SetStateAction<NodeType[]>>;
+    query:QueryType[];
+    setSuffixArray:React.Dispatch<React.SetStateAction<number[]>>;
+    setLcpArray:React.Dispatch<React.SetStateAction<number[]>>;
+    setSuffixTree:React.Dispatch<React.SetStateAction<NodeType[]>>;
     ALPHABET:string[];
     setALPHABET: React.Dispatch<React.SetStateAction<string[]>>;
     setCommand:React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3 | 4 | 5>>;
     setSuffix:React.Dispatch<React.SetStateAction<number>>;
-    setQuery:React.Dispatch<React.SetStateAction<string>>;
+    setQuery:React.Dispatch<React.SetStateAction<QueryType[]>>;
+    handleQuery:(q:QueryType[]) => void
 };
 
 const INITIAL_STATE = {
@@ -27,7 +29,7 @@ const INITIAL_STATE = {
     lcpArray:[],
     suffixTree:[],
     suffix:0,
-    query:'',
+    query:[],
     setSuffixArray:() => {},
     setLcpArray:() => {},
     setSuffixTree:() => {},
@@ -37,6 +39,7 @@ const INITIAL_STATE = {
     setCommand:() => {},
     setSuffix:() => {},
     setQuery:() => {},
+    handleQuery:() => {}
 } as TreeContextType;
 
 const TreeContext = createContext<TreeContextType>(INITIAL_STATE);
@@ -55,15 +58,21 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
     const [currIndex, setCurrIndex] = useState<number>(0);
     const [lcpPrev, setLcpPrev] = useState<number>(0);
     const [command, setCommand] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
-    const [query, setQuery] = useState<string>('');
+    const [query, setQuery] = useState<QueryType[]>([]);
+    const [currNodeIndex, setCurrNodeIndex] = useState<number>(0);
+    const [currOffset, setCurrOffest] = useState<number>(0);
+    const [currQueryIndex, setCurrQueryIndex] = useState<number>(0);
 
     useEffect(() => {
         if (command !== 3){
             return
         }else if (i >= text.length){
+            setI(0);
+            setCurrIndex(0);
+            setSuffix(0);
             setCommand(4);
             return
-        }else{
+        }else if (command === 3){
             setTimeout(() => {
                 function createLeafNode(s:string, node:NodeType, nodeIdx:number, suffix:number){
                     return {
@@ -133,10 +142,95 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
 
 
             },2000);
+        }else if (command === 4){
+
         };
     },[command, currIndex]);
 
+    useEffect(() => {
+        if (command !== 5){
+            return;
+        }else{
+            setTimeout(() => {
+                setSuffixTree(prevTree => {
+                    if (currNodeIndex === -1){
+                        setQuery(prevQ => {
+                            prevQ[currQueryIndex].className = 'unmatching-char';
+                            return [...prevQ]
+                        });
+                    }else if (text[prevTree[currNodeIndex].edgeStart + currOffset] === query[currQueryIndex].char ){
+                        if (prevTree[currNodeIndex].edgeStart + currOffset === prevTree[currNodeIndex].edgeEnd){
+                            if (currQueryIndex === query.length - 1){
+                                setQuery(prevQ => {
+                                    prevQ[currQueryIndex].className = 'found-char';
+                                    return [...prevQ]
+                                });
+                                prevTree[currNodeIndex].nodeClassName = 'found-node';
+                                setCurrNodeIndex(0);
+                                setCurrOffest(0);
+                                setCurrQueryIndex(0);
+                                setCommand(4);
+                            }else{
+                                setQuery(prevQ => {
+                                    prevQ[currQueryIndex].className = '';
+                                    prevQ[currQueryIndex + 1].className = 'heighlited-char';
+                                    return [...prevQ]
+                                });
+                                prevTree[currNodeIndex].nodeClassName = '';
+                                prevTree[currNodeIndex + 1].nodeClassName = 'heighlited-node';
+                                setCurrNodeIndex(prev => prevTree[prev].children[ALPHABET.indexOf(query[currQueryIndex + 1].char)]);
+                                setCurrOffest(0);
+                                setCurrQueryIndex(prev => prev + 1);
+                            };
+                        }else{
+                            if (currNodeIndex === query.length - 1){
+                                setQuery(prevQ => {
+                                    prevQ[currQueryIndex].className = 'found-char';
+                                    return [...prevQ]
+                                });
+                                prevTree[currNodeIndex].nodeClassName = 'found-node';
+                                setCurrNodeIndex(0);
+                                setCurrOffest(0);
+                                setCurrQueryIndex(0);
+                                setCommand(4);
+                            }else{
+                                setQuery(prevQ => {
+                                    prevQ[currQueryIndex].className = '';
+                                    prevQ[currQueryIndex + 1].className = 'heighlited-char';
+                                    return [...prevQ]
+                                });
+                                setCurrOffest(prev => prev + 1);
+                                setCurrQueryIndex(prev => prev + 1);
+                            };
+                        };
+                    }else{
+                        setQuery(prevQ => {
+                            prevQ[currNodeIndex].className = 'unmatching-char';
+                            return [...prevQ]
+                        });
+                        prevTree[currNodeIndex].nodeClassName = 'unmatching-node';
+                        setCurrNodeIndex(0);
+                        setCurrOffest(0);
+                        setCurrQueryIndex(0);
+                        setCommand(4);
+                    };
+                    return [...prevTree]
+                });
+            },2000);
+        };
+    },[command, currNodeIndex, currOffset])
+
     console.log(command);
+
+    function handleQuery(q:QueryType[]){
+        setQuery(q);
+        setCommand(5);
+        setSuffixTree(prev => {
+            prev[0].nodeClassName = 'heighlited-node';
+            setCurrNodeIndex(prev[0].children[ALPHABET.indexOf(q[0].char)]);
+            return [...prev]
+        });
+    }
 
     const VALUE = {
         text,
@@ -154,7 +248,8 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
         command,
         setCommand,
         setSuffix,
-        setQuery
+        setQuery,
+        handleQuery
     };
     return (
         <TreeContext.Provider value={VALUE}>
