@@ -9,14 +9,14 @@ type TreeContextType = {
     lcpArray:number[];
     suffixTree:NodeType[];
     suffix:number;
-    command:0 | 1 | 2 | 3 | 4 | 5;
+    command: 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500;
     query:QueryType[];
     setSuffixArray:React.Dispatch<React.SetStateAction<number[]>>;
     setLcpArray:React.Dispatch<React.SetStateAction<number[]>>;
     setSuffixTree:React.Dispatch<React.SetStateAction<NodeType[]>>;
     ALPHABET:string[];
     setALPHABET: React.Dispatch<React.SetStateAction<string[]>>;
-    setCommand:React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3 | 4 | 5>>;
+    setCommand:React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500>>;
     setSuffix:React.Dispatch<React.SetStateAction<number>>;
     setQuery:React.Dispatch<React.SetStateAction<QueryType[]>>;
     handleQuery:(q:QueryType[]) => void
@@ -57,7 +57,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
     const [i, setI] = useState<number>(0);
     const [currIndex, setCurrIndex] = useState<number>(0);
     const [lcpPrev, setLcpPrev] = useState<number>(0);
-    const [command, setCommand] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
+    const [command, setCommand] = useState<0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500>(0);
     const [query, setQuery] = useState<QueryType[]>([]);
     const [currNodeIndex, setCurrNodeIndex] = useState<number>(0);
     const [currOffset, setCurrOffest] = useState<number>(0);
@@ -148,7 +148,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
     },[command, currIndex]);
 
     useEffect(() => {
-        if (command !== 5){
+        if (command !== 5 && command !== 500){
             return;
         }else{
             setTimeout(() => {
@@ -158,6 +158,17 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                             prevQ[currQueryIndex].className = 'unmatching-char';
                             return [...prevQ]
                         });
+                        setCommand(500);
+                    }else if (command === 500){
+                        prevTree[currNodeIndex].nodeClassName = '';
+                        setQuery(prevQ => {
+                            prevQ[currQueryIndex].className = '';
+                            return [...prevQ]
+                        });
+                        setCurrNodeIndex(0);
+                        setCurrOffest(0);
+                        setCurrQueryIndex(0);
+                        setCommand(4);
                     }else if (text[prevTree[currNodeIndex].edgeStart + currOffset] === query[currQueryIndex].char ){
                         if (prevTree[currNodeIndex].edgeStart + currOffset === prevTree[currNodeIndex].edgeEnd){
                             if (currQueryIndex === query.length - 1){
@@ -166,10 +177,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                                     return [...prevQ]
                                 });
                                 prevTree[currNodeIndex].nodeClassName = 'found-node';
-                                setCurrNodeIndex(0);
-                                setCurrOffest(0);
-                                setCurrQueryIndex(0);
-                                setCommand(4);
+                                setCommand(500);
                             }else{
                                 setQuery(prevQ => {
                                     prevQ[currQueryIndex].className = '';
@@ -183,16 +191,13 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                                 setCurrQueryIndex(prev => prev + 1);
                             };
                         }else{
-                            if (currNodeIndex === query.length - 1){
+                            if (currQueryIndex === query.length - 1){
                                 setQuery(prevQ => {
                                     prevQ[currQueryIndex].className = 'found-char';
                                     return [...prevQ]
                                 });
                                 prevTree[currNodeIndex].nodeClassName = 'found-node';
-                                setCurrNodeIndex(0);
-                                setCurrOffest(0);
-                                setCurrQueryIndex(0);
-                                setCommand(4);
+                                setCommand(500);
                             }else{
                                 setQuery(prevQ => {
                                     prevQ[currQueryIndex].className = '';
@@ -209,10 +214,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                             return [...prevQ]
                         });
                         prevTree[currNodeIndex].nodeClassName = 'unmatching-node';
-                        setCurrNodeIndex(0);
-                        setCurrOffest(0);
-                        setCurrQueryIndex(0);
-                        setCommand(4);
+                        setCommand(500);
                     };
                     return [...prevTree]
                 });

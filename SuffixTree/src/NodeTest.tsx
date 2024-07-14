@@ -105,7 +105,7 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                 padding:'0.25rem',
                 border:'1px solid black',
                 borderRadius:'50%',
-                backgroundColor:`${node.nodeClassName === '' ? '': 'white'}`,
+                backgroundColor:`${node.nodeClassName === '' ? 'white': ''}`,
             }}
             className={node.nodeClassName}
             ref={ref}
@@ -149,7 +149,6 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                                         y={nodeChildrenDimentions[v].y1 !== Infinity ? (nodeChildrenDimentions[v].y1 + nodeChildrenDimentions[v].y2 - (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.sin(nodeChildrenDimentions[v].angle * Math.PI / 180)): 0}
                                         textAnchor="middle"
                                         alignmentBaseline="middle"
-                                        className={idx === 1 ? 'heighlited-char' : ''}
                                         style={{fontSize:'1.2em'}}
                                         >
                                             <tspan>{c}</tspan>
