@@ -14,7 +14,7 @@ export type NodeType = {
     edgeEnd:number,
     children:number[],
     nodeClassName:'heighlited-node' | 'found-node' | 'unmatching-node' | '',
-    charClassName:'heighlited-char' | 'found-char' | 'unmatching-char' | '',
+    charClassName:{char:number, className:'heighlited-char' | 'found-char' | 'unmatching-char' | ''},
 };
 
 type RectType = {
@@ -53,7 +53,6 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
 
         return () => window.removeEventListener('resize', updateWindowDimentions);
     },[]);
-
 
     useEffect(() => {
         if (nodeRef.current){
@@ -146,10 +145,11 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                                     {text.slice(suffixTree[v].edgeStart, suffixTree[v].edgeEnd + 1).split('').map((c, idx) => (
                                         <text key={`node-${i}-child-${c}-${idx}`}
                                         x={nodeChildrenDimentions[v].x1 !== Infinity ? (nodeChildrenDimentions[v].x1 + nodeChildrenDimentions[v].x2 + (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.cos(nodeChildrenDimentions[v].angle * Math.PI / 180)) : 0}
-                                        y={nodeChildrenDimentions[v].y1 !== Infinity ? (nodeChildrenDimentions[v].y1 + nodeChildrenDimentions[v].y2 - (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.sin(nodeChildrenDimentions[v].angle * Math.PI / 180)): 0}
+                                        y={nodeChildrenDimentions[v].y1 !== Infinity ? (nodeChildrenDimentions[v].y1 + nodeChildrenDimentions[v].y2 - (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.sin(nodeChildrenDimentions[v].angle * Math.PI / 180)) : 0}
                                         textAnchor="middle"
                                         alignmentBaseline="middle"
                                         style={{fontSize:'1.2em'}}
+                                        className={suffixTree[v].edgeStart + idx === node.charClassName.char ? node.charClassName.className: ''}
                                         >
                                             <tspan>{c}</tspan>
                                         </text>

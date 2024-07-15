@@ -14,7 +14,7 @@ export type NodeType = {
     edgeEnd:number,
     children:number[],
     nodeClassName:'heighlited-node' | 'found-node' | 'unmatching-node' | '',
-    charClassName:'heighlited-char' | 'found-char' | 'unmatching-char' | '',
+    charClassName:{char:number, className:'heighlited-char' | 'found-char' | 'unmatching-char' | ''},
 };
 
 type RectType = {

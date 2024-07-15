@@ -52,7 +52,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
     const [text, setText] = useState<string>('');
     const [suffixArray, setSuffixArray] = useState<number[]>([]);
     const [lcpArray, setLcpArray] = useState<number[]>([]);
-    const [suffixTree, setSuffixTree] = useState<NodeType[]>([{parent:-1, stringDepth:0, edgeStart:-1, edgeEnd:-1, children:Array(ALPHABET.length).fill(-1), charClassName:'', nodeClassName:''}]);
+    const [suffixTree, setSuffixTree] = useState<NodeType[]>([{parent:-1, stringDepth:0, edgeStart:-1, edgeEnd:-1, children:Array(ALPHABET.length).fill(-1), charClassName:{char:-1, className:''}, nodeClassName:''}]);
     const [suffix, setSuffix] = useState<number>(0);
     const [i, setI] = useState<number>(0);
     const [currIndex, setCurrIndex] = useState<number>(0);
@@ -82,7 +82,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         edgeEnd:s.length - 1,
                         children:Array(ALPHABET.length).fill(-1),
                         nodeClassName:'',
-                        charClassName:''
+                        charClassName:{char:-1, className:''}
                     } as NodeType;
                 };
 
@@ -94,7 +94,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         edgeEnd: start + offset - 1,
                         children:Array(ALPHABET.length).fill(-1),
                         nodeClassName:'',
-                        charClassName:''
+                        charClassName:{char:-1, className:''}
                     } as NodeType;
                 };
 
@@ -170,6 +170,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                     }else if (command === 500){
                         if (currNodeIndex !== -1){
                             prevTree[currNodeIndex].nodeClassName = '';
+                            prevTree[currNodeIndex].charClassName = {char:prevTree[currNodeIndex].edgeStart + currOffset , className:''}
                         };
                         setQuery(prevQ => {
                             prevQ[currQueryIndex].className = '';
@@ -181,12 +182,12 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         setCommand(4);
                     }else if (currNodeIndex === 0){
                         prevTree[currNodeIndex].nodeClassName = '';
-                        if(prevTree[currNodeIndex].children[ALPHABET.indexOf(query[currQueryIndex + 1].char)] !== -1){
-                            prevTree[prevTree[currNodeIndex].children[ALPHABET.indexOf(query[currQueryIndex + 1].char)]].nodeClassName = 'heighlited-node';
+                        if(prevTree[currNodeIndex].children[ALPHABET.indexOf(query[currQueryIndex].char)] !== -1){
+                            prevTree[prevTree[currNodeIndex].children[ALPHABET.indexOf(query[currQueryIndex].char)]].nodeClassName = 'heighlited-node';
+                            prevTree[prevTree[currNodeIndex].children[ALPHABET.indexOf(query[currQueryIndex].char)]].charClassName = {char:prevTree[prevTree[currNodeIndex].children[ALPHABET.indexOf(query[currQueryIndex].char)]].edgeStart, className:'heighlited-char'};
                         };
-                        setCurrNodeIndex(prev => prevTree[prev].children[ALPHABET.indexOf(query[currQueryIndex + 1].char)]);
+                        setCurrNodeIndex(prev => prevTree[prev].children[ALPHABET.indexOf(query[currQueryIndex].char)]);
                     }else if (text[prevTree[currNodeIndex].edgeStart + currOffset] === query[currQueryIndex].char ){
-                        console.log('here')
                         if (prevTree[currNodeIndex].edgeStart + currOffset === prevTree[currNodeIndex].edgeEnd){
                             if (currQueryIndex === query.length - 1){
                                 setQuery(prevQ => {
@@ -194,6 +195,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                                     return [...prevQ]
                                 });
                                 prevTree[currNodeIndex].nodeClassName = 'found-node';
+                                prevTree[currNodeIndex].charClassName = {char:prevTree[currNodeIndex].edgeStart + currOffset, className:'found-char'};
                                 setCommand(500);
                             }else{
                                 setQuery(prevQ => {
@@ -203,6 +205,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                                 });
                                 prevTree[currNodeIndex].nodeClassName = '';
                                 prevTree[prevTree[currNodeIndex].children[ALPHABET.indexOf(query[currQueryIndex + 1].char)]].nodeClassName = 'heighlited-node';
+                                prevTree[prevTree[currNodeIndex].children[ALPHABET.indexOf(query[currQueryIndex + 1].char)]].charClassName = {char:prevTree[currNodeIndex].edgeStart + currOffset, className:'heighlited-char'};
                                 setCurrNodeIndex(prev => prevTree[prev].children[ALPHABET.indexOf(query[currQueryIndex + 1].char)]);
                                 setCurrOffest(0);
                                 setCurrQueryIndex(prev => prev + 1);
@@ -214,6 +217,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                                     return [...prevQ]
                                 });
                                 prevTree[currNodeIndex].nodeClassName = 'found-node';
+                                prevTree[currNodeIndex].charClassName = {char:prevTree[currNodeIndex].edgeStart + currOffset, className:'found-char'};
                                 setCommand(500);
                             }else{
                                 setQuery(prevQ => {
@@ -221,6 +225,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                                     prevQ[currQueryIndex + 1].className = 'heighlited-char';
                                     return [...prevQ]
                                 });
+                                prevTree[currNodeIndex].charClassName = {char:prevTree[currNodeIndex].edgeStart + currOffset + 1, className:'found-char'};
                                 setCurrOffest(prev => prev + 1);
                                 setCurrQueryIndex(prev => prev + 1);
                             };
@@ -231,6 +236,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                             return [...prevQ]
                         });
                         prevTree[currNodeIndex].nodeClassName = 'unmatching-node';
+                        prevTree[currNodeIndex].charClassName = {char:prevTree[currNodeIndex].edgeStart + currOffset, className:'unmatching-char'};
                         setCommand(500);
                     };
                     return [...prevTree]
