@@ -6,7 +6,7 @@ interface LcpArrayProps extends ComponentProps<'div'>{
 };
 
 const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
-    const {text, suffixArray, command, setLcpArray, setCommand, setSuffix:setSuffix_} = useTreeContext()
+    const {text, suffixArray, command, skipCommands, setLcpArray, setCommand, setSuffix:setSuffix_} = useTreeContext()
     const [order, setOrder] = useState<number[]>(suffixArray);
     const [lcpArrayBefore, setLcpArrayBefore] = useState<number[]>([]);
     const [lcp, setLcp] = useState<number>(0);
@@ -28,7 +28,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     },[text]);
 
     useEffect(() => {
-        if (command !== 2 && command !== 20){
+        if (command !== 2 && command !== 20 && command !== 2000){
             return
         };
 
@@ -37,47 +37,82 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
                 setCommand(4);
             }else{
                 setLcpArray(lcpArrayBefore);
-                setCommand(3);
+                setCommand(skipCommands[2] ? 3000 : 3);
                 setSuffix_(suffixArray[0]);
             };
             return;
         };
-            if (nextSuffix === -1){
-                const currIndex_ = inverseOrder[suffix];
-                if (currIndex_ === text.length - 1){
-                    setLcp(0);
-                    setSuffix(prev => {
-                        return (prev + 1) % text.length
-                    });
-                }else{
-                    setNextSuffix(suffixArray[currIndex_ + 1]);
+        if (command === 2000){
+            function compareLCP(i:number, j:number, lcp__:number){
+                let lcp_ = Math.max(0, lcp__);
+                while (i + lcp_ < text.length && j + lcp_ < text.length){
+                    if (text[i + lcp_] === text[j + lcp_]){
+                        lcp_ += 1;
+                    }else{
+                        break;
+                    };
                 };
-            }else if (nextSuffix === -2){
+
+                return lcp_;
+            };
+
+            const lcpArray_ = Array(suffixArray.length - 1).fill(0);
+
+            let lcp_ = 0;
+
+            let suffix_ = suffixArray[0];
+            let i = 0
+            while (i < text.length){
+                const currIndex_ = inverseOrder[suffix_];
+                if (currIndex_ === text.length - 1){
+                    lcp_ = 0;
+                    suffix_ = (suffix_ + 1) % text.length;
+                    continue;
+                };
+                const nextSuffix_ = suffixArray[currIndex_ + 1];
+                lcp_ = compareLCP(suffix_, nextSuffix_, lcp_ - 1);
+                lcpArray_[currIndex_] = lcp_;
+                suffix_ = (suffix_ + 1) % text.length;
+                i++;
+            };
+            setCurrIndex(i);
+            setLcpArrayBefore(lcpArray_);
+        }else if (nextSuffix === -1){
+            const currIndex_ = inverseOrder[suffix];
+            if (currIndex_ === text.length - 1){
+                setLcp(0);
                 setSuffix(prev => {
-                    setLcpArrayBefore(prevLcp => {
-                        prevLcp[inverseOrder[prev]] = lcp;
-                        return [...prevLcp]
-                    });
                     return (prev + 1) % text.length
                 });
-                setLcp(prev => prev - 1);
-                setNextSuffix(-1);
-                setCurrIndex(prev => prev + 1);
             }else{
-                setTimeout(() => {
-                    const prevLcp = Math.max(0, lcp);
-                    if (suffix + prevLcp < text.length && nextSuffix + prevLcp < text.length){
-                        if (text[suffix + prevLcp] === text[nextSuffix + prevLcp]){
-                            console.log('lcpprev', prevLcp)
-                            setLcp(prevLcp + 1);
-                        }else{
-                            setNextSuffix(-2);
-                        };
+                setNextSuffix(suffixArray[currIndex_ + 1]);
+            };
+        }else if (nextSuffix === -2){
+            setSuffix(prev => {
+                setLcpArrayBefore(prevLcp => {
+                    prevLcp[inverseOrder[prev]] = lcp;
+                    return [...prevLcp]
+                });
+                return (prev + 1) % text.length
+            });
+            setLcp(prev => prev - 1);
+            setNextSuffix(-1);
+            setCurrIndex(prev => prev + 1);
+        }else{
+            setTimeout(() => {
+                const prevLcp = Math.max(0, lcp);
+                if (suffix + prevLcp < text.length && nextSuffix + prevLcp < text.length){
+                    if (text[suffix + prevLcp] === text[nextSuffix + prevLcp]){
+                        console.log('lcpprev', prevLcp)
+                        setLcp(prevLcp + 1);
                     }else{
                         setNextSuffix(-2);
                     };
-                },2000);
-            };
+                }else{
+                    setNextSuffix(-2);
+                };
+            },2000);
+        };
     },[currIndex, command, suffix, nextSuffix, lcp]);
 
     function handleReCalculate(){

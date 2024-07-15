@@ -2,6 +2,11 @@ import React, {useState, useContext, createContext, ComponentProps, useEffect} f
 import { NodeType } from "./Node";
 import { QueryType } from "./Query";
 
+/*
+    COMMANDS: -1 -> recreate, 0-> initial state, 1-> suffix array, 2 -> lcp array, 3 -> suffix tree, 4 -> end state, 5-> query
+    *10 -> resets, *100 -> clean up, *1000 -> skip steps
+ */
+
 type TreeContextType = {
     text:string,
     setText:React.Dispatch<React.SetStateAction<string>>;
@@ -9,17 +14,19 @@ type TreeContextType = {
     lcpArray:number[];
     suffixTree:NodeType[];
     suffix:number;
-    command:-1 | 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500;
+    command:-1 | 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500 | 1000 | 2000 | 3000 | 5000;
     query:QueryType[];
+    skipCommands:boolean[];
     setSuffixArray:React.Dispatch<React.SetStateAction<number[]>>;
     setLcpArray:React.Dispatch<React.SetStateAction<number[]>>;
     setSuffixTree:React.Dispatch<React.SetStateAction<NodeType[]>>;
     ALPHABET:string[];
     setALPHABET: React.Dispatch<React.SetStateAction<string[]>>;
-    setCommand:React.Dispatch<React.SetStateAction<-1 | 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500>>;
+    setCommand:React.Dispatch<React.SetStateAction<-1 | 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500 | 1000 | 2000 | 3000 | 5000>>;
     setSuffix:React.Dispatch<React.SetStateAction<number>>;
     setQuery:React.Dispatch<React.SetStateAction<QueryType[]>>;
-    handleQuery:(q:QueryType[]) => void
+    handleQuery:(q:QueryType[]) => void;
+    setSkipCommands: React.Dispatch<React.SetStateAction<boolean[]>>;
 };
 
 const INITIAL_STATE = {
@@ -30,6 +37,7 @@ const INITIAL_STATE = {
     suffixTree:[],
     suffix:0,
     query:[],
+    skipCommands:[],
     setSuffixArray:() => {},
     setLcpArray:() => {},
     setSuffixTree:() => {},
@@ -39,10 +47,35 @@ const INITIAL_STATE = {
     setCommand:() => {},
     setSuffix:() => {},
     setQuery:() => {},
-    handleQuery:() => {}
+    handleQuery:() => {},
+    setSkipCommands:() => {}
 } as TreeContextType;
 
 const TreeContext = createContext<TreeContextType>(INITIAL_STATE);
+
+function createLeafNode(s:string, node:NodeType, nodeIdx:number, suffix:number, ALPHABET:string[]){
+    return {
+        parent:nodeIdx,
+        stringDepth:s.length - suffix,
+        edgeStart:suffix + node.stringDepth,
+        edgeEnd:s.length - 1,
+        children:Array(ALPHABET.length).fill(-1),
+        nodeClassName:'',
+        charClassName:{char:-1, className:''}
+    } as NodeType;
+};
+
+function breakeNode(node:NodeType, nodeIdx:number, start:number, offset:number, ALPHABET:string[]){
+    return {
+        parent:nodeIdx,
+        stringDepth:node.stringDepth + offset,
+        edgeStart: start,
+        edgeEnd: start + offset - 1,
+        children:Array(ALPHABET.length).fill(-1),
+        nodeClassName:'',
+        charClassName:{char:-1, className:''}
+    } as NodeType;
+};
 
 export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) => {
     const [ALPHABET, setALPHABET] = useState<string[]>([
@@ -57,14 +90,15 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
     const [i, setI] = useState<number>(0);
     const [currIndex, setCurrIndex] = useState<number>(0);
     const [lcpPrev, setLcpPrev] = useState<number>(0);
-    const [command, setCommand] = useState<-1 | 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500>(0);
+    const [command, setCommand] = useState<-1 | 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500 | 1000 | 2000 | 3000 | 5000>(0);
     const [query, setQuery] = useState<QueryType[]>([]);
     const [currNodeIndex, setCurrNodeIndex] = useState<number>(0);
     const [currOffset, setCurrOffest] = useState<number>(0);
     const [currQueryIndex, setCurrQueryIndex] = useState<number>(0);
+    const [skipCommands, setSkipCommands] = useState<boolean[]>(Array(3).fill(false));
 
     useEffect(() => {
-        if (command !== 3 && command !== 30){
+        if (command !== 3 && command !== 30 && command !== 3000){
             return
         }else if (command === 30){
             setSuffixTree([{parent:-1, stringDepth:0, edgeStart:-1, edgeEnd:-1, children:Array(ALPHABET.length).fill(-1), charClassName:{char:-1, className:''}, nodeClassName:''}]);
@@ -76,32 +110,56 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
             setSuffix(suffixArray[0]);
             setCommand(4);
             return
+        }else if (command === 3000){
+            const suffixTree_:NodeType[] = [];
+            suffixTree_.push({parent:-1, stringDepth:0, edgeStart:-1, edgeEnd:-1, nodeClassName:'', charClassName:{char:-1, className:''}, children:Array(ALPHABET.length).fill(-1)});
+
+            let currNode_ = suffixTree_[0];
+            let currIndex_ = 0;
+            let lcpPrev_ = 0;
+
+            let j = 0;
+            while (j < text.length){
+                const suffix_ = suffixArray[j];
+
+                while (currNode_.stringDepth > lcpPrev_){
+                    currIndex_ = currNode_.parent;
+                    currNode_ = suffixTree_[currIndex_];
+                };
+
+                if (currNode_.stringDepth === lcpPrev_){
+                    currNode_ = createLeafNode(text, currNode_, currIndex_, suffix_, ALPHABET);
+                    suffixTree_[currIndex_].children[ALPHABET.indexOf(text[currNode_.edgeStart].toLowerCase())] = suffixTree_.length;
+                    currIndex_ = suffixTree_.length;
+                    suffixTree_.push(currNode_);
+                }else{
+                    const start = suffixArray[j - 1] + currNode_.stringDepth;
+                    const offset = lcpPrev_ - currNode_.stringDepth;
+                    const midNode = breakeNode(currNode_, currIndex_, start, offset, ALPHABET);
+
+                    midNode.children[ALPHABET.indexOf(text[start + offset].toLowerCase())] = currNode_.children[ALPHABET.indexOf(text[start].toLowerCase())];
+                    suffixTree_[suffixTree_[currIndex_].children[ALPHABET.indexOf(text[start].toLowerCase())]].parent = suffixTree_.length;
+                    suffixTree_[suffixTree_[currIndex_].children[ALPHABET.indexOf(text[start].toLowerCase())]].edgeStart += offset;
+
+                    suffixTree_[currIndex_].children[ALPHABET.indexOf(text[start].toLowerCase())] = suffixTree_.length;
+                    currIndex_ = suffixTree_.length;
+                    suffixTree_.push(midNode);
+
+                    currNode_ = createLeafNode(text, midNode, currIndex_, suffix_, ALPHABET);
+                    suffixTree_[currIndex_].children[ALPHABET.indexOf(text[currNode_.edgeStart].toLowerCase())] = suffixTree_.length;
+
+                    currIndex_ = suffixTree_.length;
+                    suffixTree_.push(currNode_);
+                };
+                if (j < text.length - 1){
+                    lcpPrev_ = lcpArray[j];
+                };
+                j++;
+            };
+            setSuffixTree(suffixTree_);
+            setI(j);
         }else if (command === 3){
             setTimeout(() => {
-                function createLeafNode(s:string, node:NodeType, nodeIdx:number, suffix:number){
-                    return {
-                        parent:nodeIdx,
-                        stringDepth:s.length - suffix,
-                        edgeStart:suffix + node.stringDepth,
-                        edgeEnd:s.length - 1,
-                        children:Array(ALPHABET.length).fill(-1),
-                        nodeClassName:'',
-                        charClassName:{char:-1, className:''}
-                    } as NodeType;
-                };
-
-                function breakeNode(node:NodeType, nodeIdx:number, start:number, offset:number){
-                    return {
-                        parent:nodeIdx,
-                        stringDepth:node.stringDepth + offset,
-                        edgeStart: start,
-                        edgeEnd: start + offset - 1,
-                        children:Array(ALPHABET.length).fill(-1),
-                        nodeClassName:'',
-                        charClassName:{char:-1, className:''}
-                    } as NodeType;
-                };
-
                 setSuffixTree(prev => {
                     let currIndexCopy = currIndex;
 
@@ -110,14 +168,14 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                     };
 
                     if (prev[currIndexCopy].stringDepth === lcpPrev){
-                        const newNode = createLeafNode(text, prev[currIndexCopy], currIndexCopy, suffix);
+                        const newNode = createLeafNode(text, prev[currIndexCopy], currIndexCopy, suffix, ALPHABET);
                         prev[currIndexCopy].children[ALPHABET.indexOf(text[newNode.edgeStart].toLowerCase())] = prev.length;
                         setCurrIndex(prev.length);
                         prev.push(newNode);
                     }else{
                         const start = suffixArray[i - 1] + prev[currIndexCopy].stringDepth;
                         const offset = lcpPrev - prev[currIndexCopy].stringDepth;
-                        const midNode = breakeNode(prev[currIndexCopy], currIndexCopy, start, offset);
+                        const midNode = breakeNode(prev[currIndexCopy], currIndexCopy, start, offset, ALPHABET);
 
                         midNode.children[ALPHABET.indexOf(text[start + offset].toLowerCase())] = prev[currIndexCopy].children[ALPHABET.indexOf(text[start].toLowerCase())];
                         prev[prev[currIndexCopy].children[ALPHABET.indexOf(text[start].toLowerCase())]].parent = prev.length;
@@ -127,7 +185,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         currIndexCopy = prev.length;
                         prev.push(midNode);
 
-                        const newNode = createLeafNode(text, midNode, currIndexCopy, suffix);
+                        const newNode = createLeafNode(text, midNode, currIndexCopy, suffix, ALPHABET);
                         prev[currIndexCopy].children[ALPHABET.indexOf(text[newNode.edgeStart].toLowerCase())] = prev.length;
 
                         setCurrIndex(prev.length);
@@ -144,10 +202,8 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                     return [...prev]
                 });
             },2000);
-        }else if (command === 4){
-
         };
-    },[command, currIndex]);
+    },[command, currIndex, i]);
 
     useEffect(() => {
         if (command !== 5 && command !== 500){
@@ -275,7 +331,9 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
         setCommand,
         setSuffix,
         setQuery,
-        handleQuery
+        handleQuery,
+        skipCommands,
+        setSkipCommands
     };
     return (
         <TreeContext.Provider value={VALUE}>

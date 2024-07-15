@@ -6,26 +6,28 @@ interface SuffixArrayProps extends ComponentProps<'div'>{
 };
 
 const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
-    const {text, setSuffixArray, ALPHABET, command, setCommand} = useTreeContext()
+    const {text, setSuffixArray, ALPHABET, command, skipCommands, setCommand} = useTreeContext()
     const [length, setLength] = useState(0);
     const [order, setOrder] = useState<number[]>(Array(text.length).fill(0));
     const [eqvClasses, setEqvClasses] = useState<number[]>(Array(text.length).fill(0));
 
     useEffect(() => {
-        if (command !== 1 && command !== 10){
+        if (command !== 1 && command !== 10 && command !== 1000){
             return
         };
         if (text !== '' && length > text.length){
             if (command === 10){
                 setCommand(4);
             }else{
+                console.log(order);
                 setSuffixArray(order);
-                setCommand(2);
+                setCommand(skipCommands[1] ? 2000 : 2);
             };
             return
         }else if (length === 0){
-            setTimeout(() => {
-                setOrder(prev => {
+            if (command === 1000){
+                function sortChars(){
+                    const order_ = Array(text.length).fill(-1);
                     const count = Array(ALPHABET.length).fill(0);
 
                     for (let i = 0; i < text.length; i ++){
@@ -38,25 +40,112 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
 
                     for (let i = text.length - 1; i >= 0; i --){
                         count[ALPHABET.indexOf(text[i].toLowerCase())] -= 1;
-                        prev[count[ALPHABET.indexOf(text[i].toLowerCase())]] = i;
+                        order_[count[ALPHABET.indexOf(text[i].toLowerCase())]] = i;
                     };
 
-                    setEqvClasses(prev_ => {
-                        for (let i = 1; i < text.length; i ++){
-                            if (text[prev[i]] !== text[prev[i - 1]]){
-                                prev_[prev[i]] = prev_[prev[i - 1]] + 1;
-                            }else{
-                                prev_[prev[i]] = prev_[prev[i - 1]];
-                            };
+                    return order_;
+                };
+
+                function computeClasses(order_:number[]){
+                    const classes = Array(order_.length).fill(0);
+
+                    for (let i = 1; i < text.length; i ++){
+                        if (text[order_[i]] !== text[order_[i - 1]]){
+                            classes[order_[i]] = classes[order_[i - 1]] + 1;
+                        }else{
+                            classes[order_[i]] = classes[order_[i - 1]];
+                        };
+                    };
+
+                    return classes;
+                };
+
+                function sortingDoubles(l:number, order_:number[], classes:number[]){
+                    const newOrder = Array(text.length).fill(0);
+                    const count = Array(text.length).fill(0);
+
+                    for (let i = 0; i < text.length; i ++){
+                        count[classes[i]] += 1;
+                    };
+
+                    for (let j = 1; j < text.length; j ++){
+                        count[j] += count[j - 1];
+                    };
+
+                    for (let i = text.length - 1; i >= 0; i --){
+                        const start = (order_[i] - l + text.length) % text.length;
+                        const cl = classes[start];
+                        count[cl] -= 1;
+                        newOrder[count[cl]] = start;
+                    };
+
+                    return newOrder;
+                };
+
+                function updateClasses(l:number, newOrder:number[], classes:number[]){
+                    const newClasses = Array(text.length).fill(0);
+
+                    for (let i = 1; i < text.length; i ++){
+                        const curr = newOrder[i];
+                        const prev = newOrder[i - 1];
+                        const currMid = (curr + l) % text.length;
+                        const prevMid = (prev + l) % text.length;
+
+                        if (classes[curr] !== classes[prev] || classes[currMid] !== classes[prevMid]){
+                            newClasses[curr] = newClasses[prev] + 1;
+                        }else{
+                            newClasses[curr] = newClasses[prev];
+                        };
+                    };
+                    return newClasses;
+                };
+                    let order_ = sortChars();
+                    let classes = computeClasses(order_);
+                    let l = 1;
+
+                    while (l < text.length){
+                        order_ = sortingDoubles(l, order_, classes);
+                        classes = updateClasses(l, order_, classes);
+                        l *= 2;
+                    };
+
+                    setOrder(order_);
+                    setLength(l);
+            }else{
+                setTimeout(() => {
+                    setOrder(prev => {
+                        const count = Array(ALPHABET.length).fill(0);
+
+                        for (let i = 0; i < text.length; i ++){
+                            count[ALPHABET.indexOf(text[i].toLowerCase())] += 1;
                         };
 
-                        return [...prev_]
-                    });
+                        for (let j = 1; j < count.length; j ++){
+                            count[j] += count[j - 1];
+                        };
 
-                    setLength(1);
-                    return [...prev]
-                });
-            },2000);
+                        for (let i = text.length - 1; i >= 0; i --){
+                            count[ALPHABET.indexOf(text[i].toLowerCase())] -= 1;
+                            prev[count[ALPHABET.indexOf(text[i].toLowerCase())]] = i;
+                        };
+
+                        setEqvClasses(prev_ => {
+                            for (let i = 1; i < text.length; i ++){
+                                if (text[prev[i]] !== text[prev[i - 1]]){
+                                    prev_[prev[i]] = prev_[prev[i - 1]] + 1;
+                                }else{
+                                    prev_[prev[i]] = prev_[prev[i - 1]];
+                                };
+                            };
+
+                            return [...prev_]
+                        });
+
+                        setLength(1);
+                        return [...prev]
+                    });
+                },2000);
+            };
         }else{
             setTimeout(() => {
                 setOrder(prevOrder => {
@@ -106,7 +195,6 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
         setLength(0);
         setCommand(10);
     };
-
     return (
         <>
             <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>

@@ -7,9 +7,12 @@ import { useTreeContext } from './TreeContext'
 import NodeTest from './NodeTest';
 import Query from './Query';
 
+const SKIP_COMMANDS = ['SA', 'LCP', 'ST'] as const
+
 function App() {
-  const {text, suffixTree, command, suffix, ALPHABET, setText, setCommand, setSuffixArray, setLcpArray, setSuffixTree} = useTreeContext();
+  const {text, suffixTree, command, suffix, ALPHABET, setText, setCommand, setSuffixArray, setLcpArray, setSuffixTree, setSkipCommands} = useTreeContext();
   const InputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (command > -1){
@@ -19,19 +22,26 @@ function App() {
   },[command])
 
   function handleClickInput(){
-    if (!InputRef.current){
+    if (!InputRef.current || !formRef.current){
       return
     };
+    setText(InputRef.current.value);
+
+    const skipCommands = Array(SKIP_COMMANDS.length).fill(false);
+    for (let i = 0; i < formRef.current!.children.length; i++){
+      const inputElem = formRef.current!.children[i].children[1] as HTMLInputElement
+      skipCommands[i] = inputElem.checked
+    };
+    setSkipCommands(skipCommands);
+
     if (command === 4){
       setSuffixArray([]);
       setLcpArray([]);
       setSuffixTree([{parent:-1, stringDepth:0, edgeStart:-1, edgeEnd:-1, children:Array(ALPHABET.length).fill(-1), charClassName:{char:-1, className:''}, nodeClassName:''}]);
-      setText(InputRef.current.value);
       setCommand(-1);
     }else{
-      setText(InputRef.current.value);
-      setCommand(1);
-    }
+      setCommand(skipCommands[0] ? 1000 : 1);
+    };
   };
 
   function reDrawTree(){
@@ -44,7 +54,7 @@ function App() {
       {command > 0 &&
         <SuffixArray/>
       }
-      {command > 1 &&
+      {Number(command.toString()[0]) > 1 &&
         <LcpArray/>
       }
 
@@ -53,8 +63,16 @@ function App() {
             <input type="text" ref={InputRef}/>
             <button disabled={command !== 0 && command !== 4} onClick={handleClickInput}>create</button>
           </div>
-            <p>text: {text}</p>
-            <p>current suffix: {text.slice(suffix, text.length)}</p>
+          <form ref={formRef} style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+            {SKIP_COMMANDS.map((v, i) => (
+              <div key={`skip-commands-${v}-${i}`} style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                <label htmlFor={`skip-${v}`}>skip {v}</label>
+                <input type="checkbox" id={`skip-${v}`} name={`skip-${v}`}/>
+              </div>
+            ))}
+          </form>
+          <p>text: {text}</p>
+          <p>current suffix: {text.slice(suffix, text.length)}</p>
         </div>
 
           <Query/>
@@ -65,7 +83,7 @@ function App() {
       </div>
 
       <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-        {command > 2 &&
+        {Number(command.toString()[0]) > 2 &&
           <NodeTest node={suffixTree[0]} adjustedHeight={0}/>
         }
       </div>
