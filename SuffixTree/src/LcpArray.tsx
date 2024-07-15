@@ -42,8 +42,6 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
             };
             return;
         };
-
-        setTimeout(() => {
             if (nextSuffix === -1){
                 const currIndex_ = inverseOrder[suffix];
                 if (currIndex_ === text.length - 1){
@@ -66,6 +64,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
                 setNextSuffix(-1);
                 setCurrIndex(prev => prev + 1);
             }else{
+                setTimeout(() => {
                     const prevLcp = Math.max(0, lcp);
                     if (suffix + prevLcp < text.length && nextSuffix + prevLcp < text.length){
                         if (text[suffix + prevLcp] === text[nextSuffix + prevLcp]){
@@ -77,8 +76,8 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
                     }else{
                         setNextSuffix(-2);
                     };
+                },2000);
             };
-        },2000);
     },[currIndex, command, suffix, nextSuffix, lcp]);
 
     function handleReCalculate(){
@@ -97,8 +96,12 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
                 <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
             </div>
             <div style={{display:'flex', gap:'1rem'}}>
-                <p>suffix: </p>
-                <p>nextSuffix: </p>
+                <p>suffix: {(command === 2 || command === 20) ? text.slice(suffix, text.length).split('').map((v, i) => (
+                    <span key={`lcp-arr-suffix-${v}-${i}`} className={lcp === i ? 'heighlited-char': lcp > i ? 'found-char' : ''}>{v}</span>
+                )) : ''}</p>
+                <p>nextSuffix: {nextSuffix > -1 ? text.slice(nextSuffix, text.length).split('').map((v, i) => (
+                    <span key={`lcp-arr-next-suffix-${v}-${i}`} className={lcp === i ? 'heighlited-char' : lcp > i ? 'found-char' : ''}>{v}</span>
+                )) : ''}</p>
             </div>
             {lcpArrayBefore.map((v, i) => {
                 return <div key={`lcp-arr-${i}`}>
