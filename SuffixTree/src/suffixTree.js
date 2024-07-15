@@ -201,12 +201,12 @@ function buildSuffixTree(s, suffixArray, lcpArray){
     return suffixTree
 };
 
-const s = 'acacbacbacc';
+const s = 'hello';
 const suffixArray = buildSuffixArray(s);
 const lcpArray = computeLCPArray(s, suffixArray);
-//console.log(lcpArray)
+console.log(lcpArray)
 const suffixTree = buildSuffixTree(s, suffixArray, lcpArray);
-console.log(suffixTree)
+//console.log(suffixTree)
 
 function deepEqualWithDiff(obj1, obj2, path = "") {
     if (obj1 === obj2) return true;

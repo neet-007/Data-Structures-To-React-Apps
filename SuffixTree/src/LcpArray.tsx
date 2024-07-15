@@ -10,8 +10,9 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     const [order, setOrder] = useState<number[]>(suffixArray);
     const [lcpArrayBefore, setLcpArrayBefore] = useState<number[]>([]);
     const [lcp, setLcp] = useState<number>(0);
-    const [currIndex, setCurrIndex] = useState<number>(0);
+    const [currIndex, setCurrIndex] = useState<number>(1);
     const [suffix, setSuffix] = useState<number>(order[0]);
+    const [nextSuffix, setNextSuffix] = useState<number>(-1);
 
     const inverseOrder = useMemo(() => {
         if (suffixArray.length === 0){
@@ -43,36 +44,48 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
         };
 
         setTimeout(() => {
-            const currIndex = inverseOrder[suffix];
-            if (currIndex === text.length - 1){
-                setLcp(0);
-                setSuffix((suffix + 1) % text.length);
-            }else{
-                const nextSuffix = suffixArray[currIndex + 1];
-                setLcp(prev => {
-                    let lcp_ = Math.max(0, prev - 1);
-                    while (suffix + lcp_ < text.length && nextSuffix + lcp_ < text.length){
-                        if (text[suffix + lcp_] === text[nextSuffix + lcp_]){
-                            lcp_ += 1;
-                        }else{
-                            break;
-                        };
-                    };
+            if (nextSuffix === -1){
+                const currIndex_ = inverseOrder[suffix];
+                if (currIndex_ === text.length - 1){
+                    setLcp(0);
+                    setSuffix(prev => {
+                        return (prev + 1) % text.length
+                    });
+                }else{
+                    setNextSuffix(suffixArray[currIndex_ + 1]);
+                };
+            }else if (nextSuffix === -2){
+                setSuffix(prev => {
                     setLcpArrayBefore(prevLcp => {
-                        prevLcp[currIndex] = lcp_;
+                        prevLcp[inverseOrder[prev]] = lcp;
                         return [...prevLcp]
                     });
-                    return lcp_
+                    return (prev + 1) % text.length
                 });
-                setSuffix((suffix + 1) % text.length);
+                setLcp(prev => prev - 1);
+                setNextSuffix(-1);
+                setCurrIndex(prev => prev + 1);
+            }else{
+                    const prevLcp = Math.max(0, lcp);
+                    if (suffix + prevLcp < text.length && nextSuffix + prevLcp < text.length){
+                        if (text[suffix + prevLcp] === text[nextSuffix + prevLcp]){
+                            console.log('lcpprev', prevLcp)
+                            setLcp(prevLcp + 1);
+                        }else{
+                            setNextSuffix(-2);
+                        };
+                    }else{
+                        setNextSuffix(-2);
+                    };
             };
-            setCurrIndex(prev => prev + 1);
         },2000);
-    },[currIndex]);
+    },[currIndex, command, suffix, nextSuffix, lcp]);
 
     function handleReCalculate(){
-        setSuffix(0);
-        setCurrIndex(0);
+        setSuffix(order[0]);
+        setNextSuffix(-1);
+        setLcp(0);
+        setCurrIndex(1);
         setLcpArrayBefore([]);
         setCommand(20);
     };
@@ -82,6 +95,10 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
             <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
                 <h3>LCP Array</h3>
                 <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
+            </div>
+            <div style={{display:'flex', gap:'1rem'}}>
+                <p>suffix: </p>
+                <p>nextSuffix: </p>
             </div>
             {lcpArrayBefore.map((v, i) => {
                 return <div key={`lcp-arr-${i}`}>
