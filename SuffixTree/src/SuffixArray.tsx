@@ -6,15 +6,22 @@ interface SuffixArrayProps extends ComponentProps<'div'>{
 };
 
 const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
-    const {text, setSuffixArray, ALPHABET, setCommand} = useTreeContext()
+    const {text, setSuffixArray, ALPHABET, command, setCommand} = useTreeContext()
     const [length, setLength] = useState(0);
     const [order, setOrder] = useState<number[]>(Array(text.length).fill(0));
     const [eqvClasses, setEqvClasses] = useState<number[]>(Array(text.length).fill(0));
 
     useEffect(() => {
+        if (command !== 1 && command !== 10){
+            return
+        };
         if (text !== '' && length > text.length){
-            setSuffixArray(order);
-            setCommand(2);
+            if (command === 10){
+                setCommand(4);
+            }else{
+                setSuffixArray(order);
+                setCommand(2);
+            };
             return
         }else if (length === 0){
             setTimeout(() => {
@@ -93,12 +100,19 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
                 setLength(prev => prev * 2);
             },2000);
         };
-    },[length])
+    },[length, command])
 
-    //console.log(order)
+    function handleReCalculate(){
+        setLength(0);
+        setCommand(10);
+    };
+
     return (
         <>
-            <h3>Suffix Array</h3>
+            <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
+                <h3>Suffix Array</h3>
+                <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
+            </div>
             {order[0] !== -1 &&
             <div {...props}>
                 {order.map((v, i) => {

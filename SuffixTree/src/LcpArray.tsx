@@ -6,7 +6,7 @@ interface LcpArrayProps extends ComponentProps<'div'>{
 };
 
 const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
-    const {text, suffixArray, setLcpArray, setCommand, setSuffix:setSuffix_} = useTreeContext()
+    const {text, suffixArray, command, setLcpArray, setCommand, setSuffix:setSuffix_} = useTreeContext()
     const [order, setOrder] = useState<number[]>(suffixArray);
     const [lcpArrayBefore, setLcpArrayBefore] = useState<number[]>([]);
     const [lcp, setLcp] = useState<number>(0);
@@ -27,10 +27,18 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     },[text]);
 
     useEffect(() => {
+        if (command !== 2 && command !== 20){
+            return
+        };
+
         if (currIndex >= text.length){
-            setLcpArray(lcpArrayBefore);
-            setCommand(3);
-            setSuffix_(suffixArray[0]);
+            if (command === 20){
+                setCommand(4);
+            }else{
+                setLcpArray(lcpArrayBefore);
+                setCommand(3);
+                setSuffix_(suffixArray[0]);
+            };
             return;
         };
 
@@ -62,9 +70,19 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
         },2000);
     },[currIndex]);
 
+    function handleReCalculate(){
+        setSuffix(0);
+        setCurrIndex(0);
+        setLcpArrayBefore([]);
+        setCommand(20);
+    };
+
     return (
         <div {...props}>
-            <h3>LCP Array</h3>
+            <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
+                <h3>LCP Array</h3>
+                <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
+            </div>
             {lcpArrayBefore.map((v, i) => {
                 return <div key={`lcp-arr-${i}`}>
                             {v}
