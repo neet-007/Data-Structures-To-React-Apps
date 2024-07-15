@@ -9,14 +9,14 @@ type TreeContextType = {
     lcpArray:number[];
     suffixTree:NodeType[];
     suffix:number;
-    command: 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500;
+    command:-1 | 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500;
     query:QueryType[];
     setSuffixArray:React.Dispatch<React.SetStateAction<number[]>>;
     setLcpArray:React.Dispatch<React.SetStateAction<number[]>>;
     setSuffixTree:React.Dispatch<React.SetStateAction<NodeType[]>>;
     ALPHABET:string[];
     setALPHABET: React.Dispatch<React.SetStateAction<string[]>>;
-    setCommand:React.Dispatch<React.SetStateAction<0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500>>;
+    setCommand:React.Dispatch<React.SetStateAction<-1 | 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500>>;
     setSuffix:React.Dispatch<React.SetStateAction<number>>;
     setQuery:React.Dispatch<React.SetStateAction<QueryType[]>>;
     handleQuery:(q:QueryType[]) => void
@@ -57,19 +57,23 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
     const [i, setI] = useState<number>(0);
     const [currIndex, setCurrIndex] = useState<number>(0);
     const [lcpPrev, setLcpPrev] = useState<number>(0);
-    const [command, setCommand] = useState<0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500>(0);
+    const [command, setCommand] = useState<-1 | 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500>(0);
     const [query, setQuery] = useState<QueryType[]>([]);
     const [currNodeIndex, setCurrNodeIndex] = useState<number>(0);
     const [currOffset, setCurrOffest] = useState<number>(0);
     const [currQueryIndex, setCurrQueryIndex] = useState<number>(0);
 
     useEffect(() => {
-        if (command !== 3){
+        if (command !== 3 && command !== 30){
             return
+        }else if (command === 30){
+            setSuffixTree([{parent:-1, stringDepth:0, edgeStart:-1, edgeEnd:-1, children:Array(ALPHABET.length).fill(-1), charClassName:{char:-1, className:''}, nodeClassName:''}]);
+            setCommand(3);
         }else if (i >= text.length){
+            setLcpPrev(0);
             setI(0);
             setCurrIndex(0);
-            setSuffix(0);
+            setSuffix(suffixArray[0]);
             setCommand(4);
             return
         }else if (command === 3){
@@ -139,8 +143,6 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                     });
                     return [...prev]
                 });
-
-
             },2000);
         }else if (command === 4){
 
