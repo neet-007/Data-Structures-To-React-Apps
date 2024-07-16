@@ -12,7 +12,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     const [lcpArrayBefore, setLcpArrayBefore] = useState<number[]>([]);
     const [lcp, setLcp] = useState<number>(0);
     const [currIndex, setCurrIndex] = useState<number>(1);
-    const [suffix, setSuffix] = useState<number>(order[0]);
+    const [suffix, setSuffix] = useState<number>(suffixArray[0]);
     const [nextSuffix, setNextSuffix] = useState<number>(-1);
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -105,12 +105,13 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
                 const prevLcp = Math.max(0, lcp);
                 if (suffix + prevLcp < text.length && nextSuffix + prevLcp < text.length){
                     if (text[suffix + prevLcp] === text[nextSuffix + prevLcp]){
-                        console.log('lcpprev', prevLcp)
                         setLcp(prevLcp + 1);
                     }else{
+                        setLcp(prevLcp);
                         setNextSuffix(-2);
                     };
                 }else{
+                    setLcp(prevLcp);
                     setNextSuffix(-2);
                 };
             },2000);

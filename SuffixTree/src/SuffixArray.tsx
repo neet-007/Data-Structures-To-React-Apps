@@ -21,7 +21,6 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
             if (command === 10){
                 setCommand(4);
             }else{
-                console.log(order);
                 setSuffixArray(order);
                 setCommand(skipCommands[1] ? 2000 : 2);
             };

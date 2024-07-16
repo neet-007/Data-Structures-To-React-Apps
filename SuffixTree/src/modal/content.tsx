@@ -1,6 +1,7 @@
 import { ContentType } from "./ModalContent";
 
 export const SA_CONTENT:ContentType[] = [
+    {title:'why the $', content:''},
     {title:'sort charecters', content:''},
     {title:'compute classes', content:''},
     {title:'sort doubles', content:''},

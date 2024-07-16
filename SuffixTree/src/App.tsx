@@ -27,7 +27,7 @@ function App() {
     if (!InputRef.current || !formRef.current){
       return
     };
-    setText(InputRef.current.value);
+    setText(InputRef.current.value.endsWith('$') ? InputRef.current.value : InputRef.current.value + '$');
 
     const skipCommands = Array(SKIP_COMMANDS.length).fill(false);
     for (let i = 0; i < formRef.current!.children.length; i++){
