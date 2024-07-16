@@ -1,6 +1,7 @@
 import React, { ComponentProps, useEffect, useMemo, useState } from 'react'
 import { useTreeContext } from './TreeContext';
 import Modal from './modal/Modal';
+import { modalOverlayClick } from './utils/functions';
 
 interface LcpArrayProps extends ComponentProps<'div'>{
 
@@ -128,7 +129,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     };
 
     return (
-        <div {...props}>
+        <div onClick={(e) => modalOverlayClick(e, setIsOpen)} {...props}>
             <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
                 <h3>LCP Array</h3>
                 <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>

@@ -7,6 +7,7 @@ import { useTreeContext } from './TreeContext'
 import NodeTest from './NodeTest';
 import Query from './Query';
 import Modal from './modal/Modal';
+import { modalOverlayClick } from './utils/functions';
 
 const SKIP_COMMANDS = ['SA', 'LCP', 'ST'] as const
 
@@ -52,7 +53,7 @@ function App() {
   console.log(suffixTree);
 
   return (
-    <div style={{position:'relative'}}>
+    <div onClick={(e) => modalOverlayClick(e, setIsOpen)} style={{position:'relative'}}>
       {command > 0 &&
         <SuffixArray/>
       }
@@ -81,7 +82,7 @@ function App() {
 
       <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
         <h3>Suffix Tree</h3>
-        <button style={{height:'max-content'}} disabled={command !== 4} onClick={reDrawTree}>re draw tree</button>
+        <button style={{height:'max-content'}} disabled={command !== 4} onClick={reDrawTree}>redraw tree</button>
         <button onClick={() => setIsOpen(true)}>I</button>
       </div>
 

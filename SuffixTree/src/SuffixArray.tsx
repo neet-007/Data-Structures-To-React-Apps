@@ -1,6 +1,7 @@
 import React, { ComponentProps, useEffect, useState } from 'react'
 import { useTreeContext } from './TreeContext';
 import Modal from './modal/Modal';
+import { modalOverlayClick } from './utils/functions';
 
 interface SuffixArrayProps extends ComponentProps<'div'>{
 
@@ -197,7 +198,7 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
         setCommand(10);
     };
     return (
-        <>
+        <div onClick={(e) => modalOverlayClick(e, setIsOpen)}>
             <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
                 <h3>Suffix Array</h3>
                 <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
@@ -213,7 +214,7 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
             </div>
             }
             <Modal isOpen={isOpen} setIsOpen={setIsOpen} title='suffix array'/>
-        </>
+        </div>
     )
 }
 
