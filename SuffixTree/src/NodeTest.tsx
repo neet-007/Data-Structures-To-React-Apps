@@ -126,7 +126,14 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                         };
                         return prev
                     },[]);
-                    const adjH = children.length > 0 ? ((suffixTree[children[Math.floor(children.length / 2)]].edgeEnd + 1 - suffixTree[children[Math.floor(children.length / 2)]].edgeStart) * CHARDIST) : 0;
+                    let adjH = suffixTree.reduce((prev:number, curr:NodeType, i:number) => {
+                        if (children.includes(i) && curr.edgeEnd + 1 - curr.edgeStart > prev){
+                            return (curr.edgeEnd + 1 - curr.edgeStart);
+                        };
+                        return prev
+                    },0);
+                    adjH *= (CHARDIST * 1.75);
+                    //const adjH = children.length > 0 ? ((suffixTree[children[Math.floor(children.length / 2)]].edgeEnd + 1 - suffixTree[children[Math.floor(children.length / 2)]].edgeStart) * CHARDIST) : 0;
                     return children.map((v, i) => {
                         return <div key={`node-${node.edgeStart}-child-${i}`}
                         style={{
@@ -155,7 +162,7 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                                         </text>
                                     ))}
                                 </svg>
-                            <NodeTest node={suffixTree[v]} adjustedHeight={adjH > 150 ? adjH : 150}
+                            <NodeTest node={suffixTree[v]} adjustedHeight={adjH}
                                         ref={(elem) => {
                                             const map = getMap();
                                             if (elem){
