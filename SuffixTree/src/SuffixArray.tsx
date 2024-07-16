@@ -1,5 +1,6 @@
 import React, { ComponentProps, useEffect, useState } from 'react'
 import { useTreeContext } from './TreeContext';
+import Modal from './modal/Modal';
 
 interface SuffixArrayProps extends ComponentProps<'div'>{
 
@@ -10,6 +11,7 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
     const [length, setLength] = useState(0);
     const [order, setOrder] = useState<number[]>(Array(text.length).fill(0));
     const [eqvClasses, setEqvClasses] = useState<number[]>(Array(text.length).fill(0));
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     useEffect(() => {
         if (command !== 1 && command !== 10 && command !== 1000){
@@ -200,6 +202,7 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
             <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
                 <h3>Suffix Array</h3>
                 <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
+                <button onClick={() => setIsOpen(true)}>I</button>
             </div>
             {order[0] !== -1 &&
             <div {...props}>
@@ -210,6 +213,7 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
                 })}
             </div>
             }
+            <Modal isOpen={isOpen} setIsOpen={setIsOpen} title='suffix array'/>
         </>
     )
 }

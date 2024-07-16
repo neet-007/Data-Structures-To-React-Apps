@@ -109,6 +109,12 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
             setCurrIndex(0);
             setSuffix(suffixArray[0]);
             setCommand(4);
+            setSkipCommands(prev => {
+                for (let i = 0; i < prev.length; i++){
+                    prev[i] = false;
+                };
+                return prev
+            });
             return
         }else if (command === 3000){
             const suffixTree_:NodeType[] = [];

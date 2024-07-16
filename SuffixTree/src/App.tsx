@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css'
 import LcpArray from './LcpArray'
 import SuffixArray from './SuffixArray'
@@ -6,19 +6,21 @@ import Node from './Node';
 import { useTreeContext } from './TreeContext'
 import NodeTest from './NodeTest';
 import Query from './Query';
+import Modal from './modal/Modal';
 
 const SKIP_COMMANDS = ['SA', 'LCP', 'ST'] as const
 
 function App() {
-  const {text, suffixTree, command, suffix, ALPHABET, setText, setCommand, setSuffixArray, setLcpArray, setSuffixTree, setSkipCommands} = useTreeContext();
+  const {text, suffixTree, command, suffix, ALPHABET, skipCommands:skipCommands_, setText, setCommand, setSuffixArray, setLcpArray, setSuffixTree, setSkipCommands} = useTreeContext();
   const InputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (command > -1){
       return
     };
-    setCommand(1);
+    setCommand(skipCommands_[0] ? 1000 : 1);
   },[command])
 
   function handleClickInput(){
@@ -80,6 +82,7 @@ function App() {
       <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
         <h3>Suffix Tree</h3>
         <button style={{height:'max-content'}} disabled={command !== 4} onClick={reDrawTree}>re draw tree</button>
+        <button onClick={() => setIsOpen(true)}>I</button>
       </div>
 
       <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
@@ -87,6 +90,7 @@ function App() {
           <NodeTest node={suffixTree[0]} adjustedHeight={0}/>
         }
       </div>
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen} title='suffix tree'/>
     </div>
   )
 }
