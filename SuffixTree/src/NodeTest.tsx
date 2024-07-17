@@ -39,11 +39,12 @@ interface NodeProps extends ComponentProps<'div'>{
 
 const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, ...props}, ref) => {
     const {text, suffixTree, ALPHABET} = useTreeContext();
+    const [windowDimentions, setWindowDimentions] = useState<{height:number, width:number}>({height:0, width:0});
+    const [windowScroll, setWindowScroll] = useState<{x:number, y:number}>({x:0, y:0});
+    const [nodeChildrenDimentions, setNodeChildrenDimentions] = useState<RectType[]>(Array(ALPHABET.length).fill({x1:Infinity, y1:Infinity, x2:Infinity, y2:Infinity, width:Infinity, height:Infinity, angle:Infinity}));
     const nodeRef = useRef<HTMLDivElement | null>(null);
     const childrenRef = useRef<Map<any, any> | null>(null);
-    const [windowDimentions, setWindowDimentions] = useState<{height:number, width:number}>({height:0, width:0});
     const prevDimintions = useRef<{height:number, width:number}>(windowDimentions);
-    const [nodeChildrenDimentions, setNodeChildrenDimentions] = useState<RectType[]>(Array(ALPHABET.length).fill({x1:Infinity, y1:Infinity, x2:Infinity, y2:Infinity, width:Infinity, height:Infinity, angle:Infinity}));
 
     useEffect(() => {
         function updateWindowDimentions(){
@@ -58,6 +59,22 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
 
         return () => window.removeEventListener('resize', updateWindowDimentions);
     },[]);
+
+    useEffect(() => {
+        function updateWindowScroll(){
+            setWindowScroll(prev => {
+                if (Math.abs(prev.x - window.scrollX) > 100 || Math.abs(prev.y - window.scrollY) > 100){
+                    return {x:window.scrollX, y:window.scrollY};
+                };
+                return prev
+            });
+        };
+
+        window.addEventListener('scroll', updateWindowScroll);
+        updateWindowScroll();
+
+        return () => window.removeEventListener('scroll', updateWindowScroll);
+    },[])
 
     useEffect(() => {
         if (nodeRef.current){
@@ -90,7 +107,7 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
 
             setNodeChildrenDimentions(arr);
         };
-    },[windowDimentions.height, windowDimentions.width, suffixTree.length]);
+    },[windowDimentions.height, windowDimentions.width, windowScroll.x, windowScroll.y, suffixTree.length]);
 
     function getMap(){
         if (!childrenRef.current){
