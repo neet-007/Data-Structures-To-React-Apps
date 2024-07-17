@@ -4,7 +4,6 @@ import LcpArray from './LcpArray'
 import SuffixArray from './SuffixArray'
 import Node from './Node';
 import { useTreeContext } from './TreeContext'
-import NodeTest from './NodeTest';
 import Query from './Query';
 import Modal from './modal/Modal';
 import { modalOverlayClick } from './utils/functions';
@@ -50,7 +49,6 @@ function App() {
   function reDrawTree(){
     setCommand(30);
   };
-  console.log(command);
 
   return (
     <div onClick={(e) => modalOverlayClick(e, setIsOpen)} style={{position:'relative'}}>
@@ -83,7 +81,7 @@ function App() {
       </div>
 
       <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-        <NodeTest node={suffixTree[0]} adjustedHeight={0}/>
+        <Node node={suffixTree[0]} adjustedHeight={0}/>
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen} title='suffix tree'/>
     </div>

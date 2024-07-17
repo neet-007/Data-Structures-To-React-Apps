@@ -217,8 +217,10 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                 setSuffixTree(prevTree => {
                     if (command === 500){
                         prevTree[currNodeIndex].nodeClassName = '';
-                        prevTree[prevTree[currNodeIndex].parent].children[ALPHABET.indexOf(text[prevTree[currNodeIndex].edgeStart])].currChar = -1;
-                        prevTree[prevTree[currNodeIndex].parent].children[ALPHABET.indexOf(text[prevTree[currNodeIndex].edgeStart])].className = '';
+                        if (currNodeIndex !== 0){
+                            prevTree[prevTree[currNodeIndex].parent].children[ALPHABET.indexOf(text[prevTree[currNodeIndex].edgeStart])].currChar = -1;
+                            prevTree[prevTree[currNodeIndex].parent].children[ALPHABET.indexOf(text[prevTree[currNodeIndex].edgeStart])].className = '';
+                        };
                         setQuery(prevQ => {
                             prevQ[currQueryIndex].className = '';
                             return [...prevQ]
@@ -302,7 +304,6 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                             };
                         };
                     }else{
-                        console.log('diiiiiiiiiiiiiiiiowwwwwwwn')
                         setQuery(prevQ => {
                             prevQ[currQueryIndex].className = 'unmatching-char';
                             return [...prevQ]
@@ -316,8 +317,6 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
             },2000);
         };
     },[command, currNodeIndex, currOffset])
-
-    console.log(command);
 
     function handleQuery(q:QueryType[]){
         setQuery(q);
