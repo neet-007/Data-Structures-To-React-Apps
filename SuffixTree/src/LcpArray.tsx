@@ -12,7 +12,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     const [lcpArrayBefore, setLcpArrayBefore] = useState<number[]>([]);
     const [lcp, setLcp] = useState<number>(0);
     const [currIndex, setCurrIndex] = useState<number>(1);
-    const [suffix, setSuffix] = useState<number>(suffixArray[0]);
+    const [suffix, setSuffix] = useState<number | undefined>(suffixArray[0]);
     const [nextSuffix, setNextSuffix] = useState<number>(-1);
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -30,6 +30,13 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     },[text, suffixArray.length]);
 
     useEffect(() => {
+        if (command === -1){
+            setNextSuffix(-1);
+            setSuffix(undefined);
+            setLcpArrayBefore([]);
+            setLcp(0);
+            setCurrIndex(1);
+        };
         if (command !== 2 && command !== 20 && command !== 2000){
             return
         };
@@ -88,7 +95,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
             if (currIndex_ === text.length - 1){
                 setLcp(0);
                 setSuffix(prev => {
-                    return (prev + 1) % text.length
+                    return (prev! + 1) % text.length
                 });
             }else{
                 setNextSuffix(suffixArray[currIndex_ + 1]);
@@ -96,10 +103,10 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
         }else if (nextSuffix === -2){
             setSuffix(prev => {
                 setLcpArrayBefore(prevLcp => {
-                    prevLcp[inverseOrder[prev]] = lcp;
+                    prevLcp[inverseOrder[prev!]] = lcp;
                     return [...prevLcp]
                 });
-                return (prev + 1) % text.length
+                return (prev! + 1) % text.length
             });
             setLcp(prev => prev - 1);
             setNextSuffix(-1);

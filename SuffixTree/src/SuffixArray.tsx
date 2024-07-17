@@ -15,6 +15,11 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     useEffect(() => {
+        if (command === -1){
+            setLength(0);
+            setOrder(Array(text.length).fill(0));
+            setEqvClasses(Array(text.length).fill(0));
+        };
         if (command !== 1 && command !== 10 && command !== 1000){
             return
         };
