@@ -7,14 +7,19 @@ const CONVERTE_TO_PX = parseFloat(getComputedStyle(document.documentElement).fon
 
 const GAP = 2;
 
+export type NodeChildrenType = {
+    index:number;
+    currChar:number;
+    className:'heighlited-char' | 'found-char' | 'unmatching-char' | '';
+};
+
 export type NodeType = {
     parent:number,
     stringDepth:number,
     edgeStart:number,
     edgeEnd:number,
-    children:number[],
+    children:NodeChildrenType[],
     nodeClassName:'heighlited-node' | 'found-node' | 'unmatching-node' | '',
-    charClassName:{char:number, className:'heighlited-char' | 'found-char' | 'unmatching-char' | ''},
 };
 
 type RectType = {
@@ -120,14 +125,14 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                     if (!node){
                         return null
                     };
-                    const children = node.children.reduce((prev:number[], curr:number) => {
-                        if (curr !== -1){
+                    const children = node.children.reduce((prev:NodeChildrenType[], curr:NodeChildrenType) => {
+                        if (curr.index !== -1){
                             prev.push(curr);
                         };
                         return prev
                     },[]);
                     let adjH = suffixTree.reduce((prev:number, curr:NodeType, i:number) => {
-                        if (children.includes(i) && curr.edgeEnd + 1 - curr.edgeStart > prev){
+                        if (children.find(x => x.index === i) && curr.edgeEnd + 1 - curr.edgeStart > prev){
                             return (curr.edgeEnd + 1 - curr.edgeStart);
                         };
                         return prev
@@ -141,32 +146,32 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                             width:'100%',
                         }}>
                                 <svg style={{position:'absolute', top:0, left:0, width:'100%', height:'100%', zIndex:-1}}>
-                                    <line x1={nodeChildrenDimentions[v].x1 !== Infinity ? nodeChildrenDimentions[v].x1 : 0}
-                                        y1={nodeChildrenDimentions[v].y1 !== Infinity ? nodeChildrenDimentions[v].y1 : 0}
-                                        x2={nodeChildrenDimentions[v].x2 !== Infinity ? nodeChildrenDimentions[v].x2 : 0}
-                                        y2={nodeChildrenDimentions[v].y2 !== Infinity ? nodeChildrenDimentions[v].y2 : 0}
-                                        height={nodeChildrenDimentions[v].height !== Infinity ? nodeChildrenDimentions[v].height : 0}
-                                        width={nodeChildrenDimentions[v].width !== Infinity ? nodeChildrenDimentions[v].width : 0}
+                                    <line x1={nodeChildrenDimentions[v.index].x1 !== Infinity ? nodeChildrenDimentions[v.index].x1 : 0}
+                                        y1={nodeChildrenDimentions[v.index].y1 !== Infinity ? nodeChildrenDimentions[v.index].y1 : 0}
+                                        x2={nodeChildrenDimentions[v.index].x2 !== Infinity ? nodeChildrenDimentions[v.index].x2 : 0}
+                                        y2={nodeChildrenDimentions[v.index].y2 !== Infinity ? nodeChildrenDimentions[v.index].y2 : 0}
+                                        height={nodeChildrenDimentions[v.index].height !== Infinity ? nodeChildrenDimentions[v.index].height : 0}
+                                        width={nodeChildrenDimentions[v.index].width !== Infinity ? nodeChildrenDimentions[v.index].width : 0}
                                         stroke='black'>
                                     </line>
-                                    {text.slice(suffixTree[v].edgeStart, suffixTree[v].edgeEnd + 1).split('').map((c, idx) => (
+                                    {text.slice(suffixTree[v.index].edgeStart, suffixTree[v.index].edgeEnd + 1).split('').map((c, idx) => (
                                         <text key={`node-${i}-child-${c}-${idx}`}
-                                        x={nodeChildrenDimentions[v].x1 !== Infinity ? (nodeChildrenDimentions[v].x1 + nodeChildrenDimentions[v].x2 + (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.cos(nodeChildrenDimentions[v].angle * Math.PI / 180)) : 0}
-                                        y={nodeChildrenDimentions[v].y1 !== Infinity ? (nodeChildrenDimentions[v].y1 + nodeChildrenDimentions[v].y2 - (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.sin(nodeChildrenDimentions[v].angle * Math.PI / 180)) : 0}
+                                        x={nodeChildrenDimentions[v.index].x1 !== Infinity ? (nodeChildrenDimentions[v.index].x1 + nodeChildrenDimentions[v.index].x2 + (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.cos(nodeChildrenDimentions[v.index].angle * Math.PI / 180)) : 0}
+                                        y={nodeChildrenDimentions[v.index].y1 !== Infinity ? (nodeChildrenDimentions[v.index].y1 + nodeChildrenDimentions[v.index].y2 - (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.sin(nodeChildrenDimentions[v.index].angle * Math.PI / 180)) : 0}
                                         textAnchor="middle"
                                         alignmentBaseline="middle"
                                         style={{fontSize:'1.2em'}}
-                                        className={suffixTree[v].edgeStart + idx === node.charClassName.char ? node.charClassName.className: ''}
+                                        className={v.currChar === idx ? v.className : ''}
                                         >
                                             <tspan>{c}</tspan>
                                         </text>
                                     ))}
                                 </svg>
-                            <NodeTest node={suffixTree[v]} adjustedHeight={adjH}
+                            <NodeTest node={suffixTree[v.index]} adjustedHeight={adjH}
                                         ref={(elem) => {
                                             const map = getMap();
                                             if (elem){
-                                                map.set(v, elem.getBoundingClientRect())
+                                                map.set(v.index, elem.getBoundingClientRect())
                                             }else{
                                                 map.delete(elem)
                                             };

@@ -40,7 +40,7 @@ function App() {
     if (command === 4){
       setSuffixArray([]);
       setLcpArray([]);
-      setSuffixTree([{parent:-1, stringDepth:0, edgeStart:-1, edgeEnd:-1, children:Array(ALPHABET.length).fill(-1), charClassName:{char:-1, className:''}, nodeClassName:''}]);
+      setSuffixTree([{parent:-1, stringDepth:0, edgeStart:-1, edgeEnd:-1, children:Array(ALPHABET.length).fill({index:-1, currChar:-1, clasName:''}), nodeClassName:''}]);
       setCommand(-1);
     }else{
       setCommand(skipCommands[0] ? 1000 : 1);
@@ -87,9 +87,7 @@ function App() {
       </div>
 
       <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-        {Number(command.toString()[0]) > 2 &&
-          <NodeTest node={suffixTree[0]} adjustedHeight={0}/>
-        }
+        <NodeTest node={suffixTree[0]} adjustedHeight={0}/>
       </div>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen} title='suffix tree'/>
     </div>

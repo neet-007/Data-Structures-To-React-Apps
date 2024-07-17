@@ -9,7 +9,6 @@ interface LcpArrayProps extends ComponentProps<'div'>{
 
 const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     const {text, suffixArray, command, skipCommands, setLcpArray, setCommand, setSuffix:setSuffix_} = useTreeContext()
-    const [order, setOrder] = useState<number[]>(suffixArray);
     const [lcpArrayBefore, setLcpArrayBefore] = useState<number[]>([]);
     const [lcp, setLcp] = useState<number>(0);
     const [currIndex, setCurrIndex] = useState<number>(1);
@@ -120,7 +119,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     },[currIndex, command, suffix, nextSuffix, lcp]);
 
     function handleReCalculate(){
-        setSuffix(order[0]);
+        setSuffix(suffixArray[0]);
         setNextSuffix(-1);
         setLcp(0);
         setCurrIndex(1);

@@ -7,14 +7,19 @@ const CONVERTE_TO_PX = parseFloat(getComputedStyle(document.documentElement).fon
 
 const GAP = 2;
 
+export type NodeChildrenType = {
+    index:number;
+    currChar:number;
+    className:'heighlited-char' | 'found-char' | 'unmatching-char' | '';
+};
+
 export type NodeType = {
     parent:number,
     stringDepth:number,
     edgeStart:number,
     edgeEnd:number,
-    children:number[],
+    children:NodeChildrenType[],
     nodeClassName:'heighlited-node' | 'found-node' | 'unmatching-node' | '',
-    charClassName:{char:number, className:'heighlited-char' | 'found-char' | 'unmatching-char' | ''},
 };
 
 type RectType = {
