@@ -94,7 +94,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
     const [currOffset, setCurrOffest] = useState<number>(0);
     const [currQueryIndex, setCurrQueryIndex] = useState<number>(0);
     const [skipCommands, setSkipCommands] = useState<boolean[]>(Array(3).fill(false));
-
+    console.log(ALPHABET)
     useEffect(() => {
         if (command !== 3 && command !== 30 && command !== 3000){
             return

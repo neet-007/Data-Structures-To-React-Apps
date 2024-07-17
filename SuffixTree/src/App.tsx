@@ -11,8 +11,10 @@ import { modalOverlayClick } from './utils/functions';
 const SKIP_COMMANDS = ['SA', 'LCP', 'ST'] as const
 
 function App() {
-  const {text, suffixTree, command, suffix, ALPHABET, skipCommands:skipCommands_, setText, setCommand, setSuffixArray, setLcpArray, setSuffixTree, setSkipCommands} = useTreeContext();
+  const {text, suffixTree, command, suffix, ALPHABET, skipCommands:skipCommands_, setText, setCommand, setSuffixArray, setLcpArray, setSuffixTree, setSkipCommands, setALPHABET} = useTreeContext();
   const InputRef = useRef<HTMLInputElement>(null);
+  const alphabetRef = useRef<HTMLInputElement>(null);
+  const alphabetSortRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -22,6 +24,23 @@ function App() {
     };
     setCommand(skipCommands_[0] ? 1000 : 1);
   },[command])
+
+  function handleAlphabetSet(){
+    if (!alphabetRef.current || !alphabetSortRef.current){
+      return
+    };
+    const arr = alphabetRef.current.value.split(',').filter(x => x !== '');
+    if (arr.length !== Math.floor(alphabetRef.current.value.length / 2) + 1){
+      alert('there are more commas that there should be');
+      return
+    };
+
+    if (alphabetSortRef.current.checked){
+      arr.sort();
+    };
+
+    setALPHABET(arr);
+  };
 
   function handleClickInput(){
     if (!InputRef.current || !formRef.current){
@@ -57,8 +76,24 @@ function App() {
 
         <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
           <div>
+            <label htmlFor="">text</label>
             <input type="text" ref={InputRef}/>
             <button disabled={command !== 0 && command !== 4} onClick={handleClickInput}>create</button>
+            <button>options</button>
+            <div>
+              <div>
+                <label htmlFor="">set alphabet</label>
+                <input type="text" placeholder='type each charecter separeted by a coma ,' ref={alphabetRef}/>
+                <button onClick={handleAlphabetSet}>set</button>
+                <button onClick={() => setALPHABET(['$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'])}>
+                  reset default
+                </button>
+                  <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                    <label htmlFor={'alphbet-sort'}>sort</label>
+                    <input ref={alphabetSortRef} type="checkbox" id={'alphbet-sort'} name={'alphbet-sort'}/>
+                  </div>
+              </div>
+            </div>
           </div>
           <form ref={formRef} style={{display:'flex', alignItems:'center', gap:'1rem'}}>
             {SKIP_COMMANDS.map((v, i) => (

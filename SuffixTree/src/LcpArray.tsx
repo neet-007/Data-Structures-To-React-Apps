@@ -14,6 +14,8 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     const [currIndex, setCurrIndex] = useState<number>(1);
     const [suffix, setSuffix] = useState<number | undefined>(suffixArray[0]);
     const [nextSuffix, setNextSuffix] = useState<number>(-1);
+    const [currModalTitle, setCurrTitle] = useState<'lcp array' | 'timer'>('lcp array');
+    const [timer, setTimer] = useState<number>(2000);
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const inverseOrder = useMemo(() => {
@@ -125,7 +127,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
                     setLcp(prevLcp);
                     setNextSuffix(-2);
                 };
-            },2000);
+            },timer);
         };
     },[currIndex, command, suffix, nextSuffix, lcp, inverseOrder.length]);
 
@@ -143,7 +145,8 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
             <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
                 <h3>LCP Array</h3>
                 <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
-                <button onClick={() => setIsOpen(true)}>I</button>
+                <button onClick={() => {setIsOpen(true);setCurrTitle('lcp array')}}>I</button>
+                <button onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
             </div>
             <div style={{display:'flex', gap:'1rem'}}>
                 <p>suffix: {(command === 2 || command === 20) ? text.slice(suffix, text.length).split('').map((v, i) => (
@@ -158,7 +161,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
                             {v}
                        </div>
             })}
-            <Modal isOpen={isOpen} setIsOpen={setIsOpen} title='lcp array'/>
+            <Modal isOpen={isOpen} setIsOpen={setIsOpen} title={currModalTitle} setTimer={currModalTitle === 'timer' ? setTimer : undefined}/>
         </div>
     );
 };

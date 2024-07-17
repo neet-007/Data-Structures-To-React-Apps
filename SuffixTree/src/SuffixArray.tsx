@@ -12,6 +12,8 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
     const [length, setLength] = useState(0);
     const [order, setOrder] = useState<number[]>(Array(text.length).fill(0));
     const [eqvClasses, setEqvClasses] = useState<number[]>(Array(text.length).fill(0));
+    const [currModalTitle, setCurrTitle] = useState<'suffix array' | 'timer'>('suffix array');
+    const [timer, setTimer] = useState<number>(2000);
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     useEffect(() => {
@@ -156,7 +158,7 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
                         setLength(1);
                         return [...prev]
                     });
-                },2000);
+                },timer);
             };
         }else{
             setTimeout(() => {
@@ -198,7 +200,7 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
                     return newOrder
                 });
                 setLength(prev => prev * 2);
-            },2000);
+            },timer);
         };
     },[length, command])
 
@@ -211,7 +213,8 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
             <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
                 <h3>Suffix Array</h3>
                 <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
-                <button onClick={() => setIsOpen(true)}>I</button>
+                <button onClick={() => {setIsOpen(true);setCurrTitle('suffix array')}}>I</button>
+                <button onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
             </div>
             {order[0] !== -1 &&
             <div {...props}>
@@ -222,7 +225,7 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
                 })}
             </div>
             }
-            <Modal isOpen={isOpen} setIsOpen={setIsOpen} title='suffix array'/>
+            <Modal isOpen={isOpen} setIsOpen={setIsOpen} title={currModalTitle} setTimer={currModalTitle === 'timer' ? setTimer : undefined}/>
         </div>
     )
 }
