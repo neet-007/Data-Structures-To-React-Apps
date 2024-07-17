@@ -50,16 +50,12 @@ function App() {
   function reDrawTree(){
     setCommand(30);
   };
-  console.log(suffixTree);
+  console.log(command);
 
   return (
     <div onClick={(e) => modalOverlayClick(e, setIsOpen)} style={{position:'relative'}}>
-      {command > 0 &&
         <SuffixArray/>
-      }
-      {Number(command.toString()[0]) > 1 &&
         <LcpArray/>
-      }
 
         <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
           <div>

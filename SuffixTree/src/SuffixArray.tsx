@@ -116,6 +116,9 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
             }else{
                 setTimeout(() => {
                     setOrder(prev => {
+                        if (prev.length === 0){
+                            prev = Array(text.length).fill(0);
+                        };
                         const count = Array(ALPHABET.length).fill(0);
 
                         for (let i = 0; i < text.length; i ++){
@@ -132,6 +135,9 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
                         };
 
                         setEqvClasses(prev_ => {
+                            if (prev_.length === 0){
+                                prev_ = Array(text.length).fill(0);
+                            };
                             for (let i = 1; i < text.length; i ++){
                                 if (text[prev[i]] !== text[prev[i - 1]]){
                                     prev_[prev[i]] = prev_[prev[i - 1]] + 1;
@@ -139,7 +145,6 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
                                     prev_[prev[i]] = prev_[prev[i - 1]];
                                 };
                             };
-
                             return [...prev_]
                         });
 
@@ -185,7 +190,6 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
                     };
 
                     setEqvClasses(newClasses);
-
                     return newOrder
                 });
                 setLength(prev => prev * 2);

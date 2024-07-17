@@ -27,13 +27,15 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
         };
 
         return return_value
-    },[text]);
+    },[text, suffixArray.length]);
 
     useEffect(() => {
         if (command !== 2 && command !== 20 && command !== 2000){
             return
         };
-
+        if (inverseOrder.length === 0){
+            return
+        };
         if (currIndex >= text.length){
             if (command === 20){
                 setCommand(4);
@@ -79,6 +81,8 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
             };
             setCurrIndex(i);
             setLcpArrayBefore(lcpArray_);
+        }else if (suffix === undefined){
+            setSuffix(suffixArray[0]);
         }else if (nextSuffix === -1){
             const currIndex_ = inverseOrder[suffix];
             if (currIndex_ === text.length - 1){
@@ -116,7 +120,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
                 };
             },2000);
         };
-    },[currIndex, command, suffix, nextSuffix, lcp]);
+    },[currIndex, command, suffix, nextSuffix, lcp, inverseOrder.length]);
 
     function handleReCalculate(){
         setSuffix(suffixArray[0]);
