@@ -1,3 +1,4 @@
+import fs from 'fs'
 const ALPHABET = [
     '$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
@@ -201,13 +202,20 @@ function buildSuffixTree(s, suffixArray, lcpArray){
     return suffixTree
 };
 
-const s = 'banana$';
+const s = 'dddddddddddd$';
 const suffixArray = buildSuffixArray(s);
+console.log(suffixArray)
 const lcpArray = computeLCPArray(s, suffixArray);
 console.log(lcpArray)
 const suffixTree = buildSuffixTree(s, suffixArray, lcpArray);
-//console.log(suffixTree)
-
+console.log(suffixTree.length)
+/*
+fs.writeFile('./SuffixTree/src/utils/arr2.json', JSON.stringify(suffixTree), (err) => {
+    if (err){
+        console.log(err);
+    };
+});
+*/
 function deepEqualWithDiff(obj1, obj2, path = "") {
     if (obj1 === obj2) return true;
   
@@ -266,5 +274,3 @@ for (let i = 1; i < suffixTree.length; i++){
     console.log(s.slice(suffixTree[i].edgeStart, suffixTree[i].edgeEnd + 1));
 };
 */
-
-//console.log(arraysEqualWithDiff(arr1, arr2))

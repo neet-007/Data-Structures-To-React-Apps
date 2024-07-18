@@ -157,24 +157,25 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                     adjH *= (CHARDIST * 1.75);
                     //const adjH = children.length > 0 ? ((suffixTree[children[Math.floor(children.length / 2)]].edgeEnd + 1 - suffixTree[children[Math.floor(children.length / 2)]].edgeStart) * CHARDIST) : 0;
                     return children.map((v, i) => {
+                        const key = ALPHABET.indexOf(text[suffixTree[v.index].edgeStart]);
                         return <div key={`node-${node.edgeStart}-child-${i}`}
                         style={{
                             height:'100%',
                             width:'100%',
                         }}>
                                 <svg style={{position:'absolute', top:0, left:0, width:'100%', height:'100%', zIndex:-1}}>
-                                    <line x1={nodeChildrenDimentions[v.index].x1 !== Infinity ? nodeChildrenDimentions[v.index].x1 : 0}
-                                        y1={nodeChildrenDimentions[v.index].y1 !== Infinity ? nodeChildrenDimentions[v.index].y1 : 0}
-                                        x2={nodeChildrenDimentions[v.index].x2 !== Infinity ? nodeChildrenDimentions[v.index].x2 : 0}
-                                        y2={nodeChildrenDimentions[v.index].y2 !== Infinity ? nodeChildrenDimentions[v.index].y2 : 0}
-                                        height={nodeChildrenDimentions[v.index].height !== Infinity ? nodeChildrenDimentions[v.index].height : 0}
-                                        width={nodeChildrenDimentions[v.index].width !== Infinity ? nodeChildrenDimentions[v.index].width : 0}
+                                    <line x1={nodeChildrenDimentions[key].x1 !== Infinity ? nodeChildrenDimentions[key].x1 : 0}
+                                        y1={nodeChildrenDimentions[key].y1 !== Infinity ? nodeChildrenDimentions[key].y1 : 0}
+                                        x2={nodeChildrenDimentions[key].x2 !== Infinity ? nodeChildrenDimentions[key].x2 : 0}
+                                        y2={nodeChildrenDimentions[key].y2 !== Infinity ? nodeChildrenDimentions[key].y2 : 0}
+                                        height={nodeChildrenDimentions[key].height !== Infinity ? nodeChildrenDimentions[key].height : 0}
+                                        width={nodeChildrenDimentions[key].width !== Infinity ? nodeChildrenDimentions[key].width : 0}
                                         stroke='black'>
                                     </line>
                                     {text.slice(suffixTree[v.index].edgeStart, suffixTree[v.index].edgeEnd + 1).split('').map((c, idx) => (
                                         <text key={`node-${i}-child-${c}-${idx}`}
-                                        x={nodeChildrenDimentions[v.index].x1 !== Infinity ? (nodeChildrenDimentions[v.index].x1 + nodeChildrenDimentions[v.index].x2 + (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.cos(nodeChildrenDimentions[v.index].angle * Math.PI / 180)) : 0}
-                                        y={nodeChildrenDimentions[v.index].y1 !== Infinity ? (nodeChildrenDimentions[v.index].y1 + nodeChildrenDimentions[v.index].y2 - (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.sin(nodeChildrenDimentions[v.index].angle * Math.PI / 180)) : 0}
+                                        x={nodeChildrenDimentions[key].x1 !== Infinity ? (nodeChildrenDimentions[key].x1 + nodeChildrenDimentions[key].x2 + (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.cos(nodeChildrenDimentions[key].angle * Math.PI / 180)) : 0}
+                                        y={nodeChildrenDimentions[key].y1 !== Infinity ? (nodeChildrenDimentions[key].y1 + nodeChildrenDimentions[key].y2 - (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.sin(nodeChildrenDimentions[key].angle * Math.PI / 180)) : 0}
                                         textAnchor="middle"
                                         alignmentBaseline="middle"
                                         style={{fontSize:'1.2em'}}
@@ -188,7 +189,7 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                                         ref={(elem) => {
                                             const map = getMap();
                                             if (elem){
-                                                map.set(v.index, elem.getBoundingClientRect())
+                                                map.set(key, elem.getBoundingClientRect())
                                             }else{
                                                 map.delete(elem)
                                             };

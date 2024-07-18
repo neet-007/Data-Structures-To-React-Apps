@@ -205,7 +205,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                     });
                     return [...prev]
                 });
-            },2000);
+            },10);
         };
     },[command, currIndex, i]);
 
