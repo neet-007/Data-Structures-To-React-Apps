@@ -34,7 +34,7 @@ const Query:React.FC<QueryProps> = ({...props}) => {
         <div className='flex flex-direction-column' {...props}>
         <div className='flex align-items-center gap-2-rem'>
             <DynamicHeightInput passedLabel='query' passedPlaceHolder='query should be shorter than the text' ref={queryRef}/>
-            <button className='height-max-content' disabled={command !== 4} onClick={handleClickQuery}>query</button>
+            <button className='height-max-content button' disabled={command !== 4} onClick={handleClickQuery}>query</button>
         </div>
         <div>query: {query.map((v, i) => (
             <span key={`query-text-${v.char}-${i}`} className={v.className}>{v.char}</span>

@@ -66,23 +66,23 @@ function App() {
   };
 
   return (
-    <div style={{position:'relative'}}>
-        <div style={{display:'flex', justifyContent:'space-between'}}>
+    <div className='position-relative p-2-rem'>
+        <div className='flex justify-content-between'>
           <div>
             <SuffixArray/>
             <LcpArray/>
           </div>
-          <div>
-            <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
-              <h1>suffix tree visualizer</h1>
+          <div className='b-1-black b-3-radius p-1-rem'>
+            <div className='flex flex-direction-column gap-2-rem'>
+              <h1 className='capitalize'>suffix tree visualizer</h1>
               <div>
-                <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                <div className='flex align-items-center gap-2-rem'>
                   <DynamicHeightInput passedLabel='text' ref={InputRef}/>
-                  <button style={{height:'max-content'}} disabled={command !== 0 && command !== 4} onClick={handleClickInput}>create</button>
+                  <button className='height-max-content button' disabled={command !== 0 && command !== 4} onClick={handleClickInput}>create</button>
                 </div>
-                <form ref={formRef} style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                <form ref={formRef} className='flex align-items-center gap-1-rem'>
                 {SKIP_COMMANDS.map((v, i) => (
-                  <div key={`skip-commands-${v}-${i}`} style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                  <div key={`skip-commands-${v}-${i}`} className='flex align-items-center gap-1-rem'>
                     <label htmlFor={`skip-${v}`}>skip {v}</label>
                     <input type="checkbox" id={`skip-${v}`} name={`skip-${v}`}/>
                   </div>
@@ -92,14 +92,14 @@ function App() {
                 <div>current suffix: {text.slice(suffix, text.length)}</div>
               </div>
               <div>
-                  <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                  <div className='flex align-items-center gap-2-rem'>
                     <DynamicHeightInput passedLabel='set alphabet' passedPlaceHolder='enter the chars separetd by comma ,' ref={alphabetRef}/>
-                    <button style={{height:'max-content'}} disabled={command !== 0 && command !== 4} onClick={handleAlphabetSet}>set</button>
-                    <button style={{height:'max-content'}} disabled={command !== 0 && command !== 4} onClick={() => setALPHABET(['$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'])}>
+                    <button className='height-max-content button' disabled={command !== 0 && command !== 4} onClick={handleAlphabetSet}>set</button>
+                    <button className='height-max-content button' disabled={command !== 0 && command !== 4} onClick={() => setALPHABET(['$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'])}>
                       reset default
                     </button>
                   </div>
-                    <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                    <div className='flex align-items-center gap-2-rem'>
                       <label htmlFor={'alphbet-sort'}>sort</label>
                       <input ref={alphabetSortRef} type="checkbox" id={'alphbet-sort'} name={'alphbet-sort'}/>
                     </div>

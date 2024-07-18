@@ -1,6 +1,22 @@
 :root{
     font-size: 1.2em;
     font-weight: bolder;
+    background-color: #fdf0d5;
+    text-transform: capitalize;
+    --clr-bg: #fdfdfd;
+    --clr-primary: #003049;
+    --clr-secondary: #669bbc;
+    --clr-warning: #c1121f;
+    --clr-success: #2ec4b6;
+}
+.bg-bg{
+    background-color: #fdf0d5;
+}
+.bg-primary{
+    background-color: #003049;
+}
+.bg-secondary{
+    background-color: #669bbc;
 }
 .height-max-content{
     height: max-content;
@@ -75,24 +91,66 @@
 .capitalize{
     text-transform: capitalize;
 }
+.thick-i{
+    font-weight: 900;
+    font-size: 1em;
+}
+.p-1-rem{
+    padding: 0.5rem;
+}
+.p-2-rem{
+    padding: 1rem;
+}
+.p-3-rem{
+    padding: 1.5rem;
+}
+.b-1-black{
+    border: 1px solid black;
+}
+.b-1-radius{
+    border-radius: 0.25rem;
+}
+.b-2-radius{
+    border-radius: 0.5rem;
+}
+.b-3-radius{
+    border-radius: 0.75rem;
+}
+.b-4-radius{
+    border-radius: 1rem;
+}
 .heighlited-char{
-    fill: blueviolet;
-    color: blueviolet;
+    fill: var(--clr-secondary);
+    color: var(--clr-secondary);
 }
 .unmatching-char{
-    fill: red;
-    color: red;
+    fill: var(--clr-warning);
+    color: var(--clr-warning);
 }
 .found-char{
-    fill: aquamarine;
-    color: aquamarine;
+    fill: var(--clr-success);
+    color: var(--clr-success);
+}
+.button{
+    padding: 0.25rem;
+    min-width: 5rem;
+    min-height: 1.7rem;
+    border-radius: 0.4rem;
+    border: 0.5px solid black;
+    text-transform: capitalize;
+    background-color: var(--clr-primary);
+    color: white;
+    transition: background-color 200ms ease-in-out;
+}
+.button:hover{
+    background-color: var(--clr-secondary);
 }
 .heighlited-node{
-    background-color: blueviolet;
+    background-color: var(--clr-secondary);
 }
 .unmatching-node{
-    background-color: red;
+    background-color: var(--clr-warning);
 }
 .found-node{
-    background-color: aquamarine;
+    background-color: var(--clr-success);
 }

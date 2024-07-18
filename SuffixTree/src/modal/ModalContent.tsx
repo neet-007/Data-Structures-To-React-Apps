@@ -22,13 +22,13 @@ const ModalContent:React.FC<ComponentProps<'div'> & {passedContent:ContentType[]
                         {passedContent[page].content}
                     </p>
                 </div>
-                <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
+                <div className='position-absolute bottom-0 flex gap-2-rem align-items-center' style={{ transform: 'translateY(-50%)' }}>
                     <p>{page}</p>
                     {page > 0 &&
-                        <button style={{height:'max-content'}} onClick={() => setPage(prev => prev - 1)}>back</button>
+                        <button className='heigth-max-content button' onClick={() => setPage(prev => prev - 1)}>back</button>
                     }
                     {page < passedContent.length - 1 &&
-                        <button style={{height:'max-content'}} onClick={() => setPage(prev => prev + 1)}>next</button>
+                        <button className='heigth-max-content button' onClick={() => setPage(prev => prev + 1)}>next</button>
                     }
                 </div>
             </div>

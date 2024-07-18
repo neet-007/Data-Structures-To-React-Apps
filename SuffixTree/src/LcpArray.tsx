@@ -150,11 +150,11 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     return (
         <div ref={layoutRef} onClick={(e) => modalOverlayClick(e, setIsOpen)} {...props}>
             <div className='flex gap-2-rem align-items-center'>
-                <h3>LCP Array</h3>
-                <button className='height-max-content' disabled={command !== 4} onClick={handleReCalculate}>recalculate</button>
-                <button className='height-max-content' disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
-                <button className='height-max-content' onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
-                <button className='height-max-content' onClick={() => {setIsOpen(true);setCurrTitle('lcp array')}}>I</button>
+                <h3 className='capitalize'>LCP for ordered suffixes</h3>
+                <button className='height-max-content button' disabled={command !== 4} onClick={handleReCalculate}>recalculate</button>
+                <button className='height-max-content button' disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
+                <button className='height-max-content button' onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
+                <button className='height-max-content button thick-i' onClick={() => {setIsOpen(true);setCurrTitle('lcp array')}}>i</button>
             </div>
             <div className='flex flex-direction-column'>
                 <p>suffix: {(command === 2 || command === 20) ? text.slice(suffix, text.length).split('').map((v, i) => (
@@ -166,7 +166,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
             </div>
             {lcpArrayBefore.map((v, i) => {
                 return <div key={`lcp-arr-${i}`}>
-                            {v}
+                            {v} common prefixes characters between suffixes {i + 1}, {i + 2}
                        </div>
             })}
             <Modal isOpen={isOpen} setIsOpen={setIsOpen} title={currModalTitle} setTimer={currModalTitle === 'timer' ? setTimer : undefined}/>
