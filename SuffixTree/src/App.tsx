@@ -67,42 +67,49 @@ function App() {
 
   return (
     <div style={{position:'relative'}}>
-        <SuffixArray/>
-        <LcpArray/>
-
-        <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+        <div style={{display:'flex', justifyContent:'space-between'}}>
           <div>
-            <DynamicHeightInput passedLabel='text' ref={InputRef}/>
-            <button disabled={command !== 0 && command !== 4} onClick={handleClickInput}>create</button>
-            <button>options</button>
-            <div>
+            <SuffixArray/>
+            <LcpArray/>
+          </div>
+          <div>
+            <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
+              <h1>suffix tree visualizer</h1>
               <div>
-                <DynamicHeightInput passedLabel='set alphabet' passedPlaceHolder='enter the chars separetd by comma ,' ref={alphabetRef}/>
-                <button disabled={command !== 0 && command !== 4} onClick={handleAlphabetSet}>set</button>
-                <button disabled={command !== 0 && command !== 4} onClick={() => setALPHABET(['$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'])}>
-                  reset default
-                </button>
-                  <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
-                    <label htmlFor={'alphbet-sort'}>sort</label>
-                    <input ref={alphabetSortRef} type="checkbox" id={'alphbet-sort'} name={'alphbet-sort'}/>
+                <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                  <DynamicHeightInput passedLabel='text' ref={InputRef}/>
+                  <button style={{height:'max-content'}} disabled={command !== 0 && command !== 4} onClick={handleClickInput}>create</button>
+                </div>
+                <form ref={formRef} style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                {SKIP_COMMANDS.map((v, i) => (
+                  <div key={`skip-commands-${v}-${i}`} style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                    <label htmlFor={`skip-${v}`}>skip {v}</label>
+                    <input type="checkbox" id={`skip-${v}`} name={`skip-${v}`}/>
                   </div>
+                ))}
+                </form>
+                <div>text: {text}</div>
+                <div>current suffix: {text.slice(suffix, text.length)}</div>
               </div>
+              <div>
+                  <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                    <DynamicHeightInput passedLabel='set alphabet' passedPlaceHolder='enter the chars separetd by comma ,' ref={alphabetRef}/>
+                    <button style={{height:'max-content'}} disabled={command !== 0 && command !== 4} onClick={handleAlphabetSet}>set</button>
+                    <button style={{height:'max-content'}} disabled={command !== 0 && command !== 4} onClick={() => setALPHABET(['$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'])}>
+                      reset default
+                    </button>
+                  </div>
+                    <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                      <label htmlFor={'alphbet-sort'}>sort</label>
+                      <input ref={alphabetSortRef} type="checkbox" id={'alphbet-sort'} name={'alphbet-sort'}/>
+                    </div>
+              </div>
+              <Query/>
             </div>
           </div>
-          <form ref={formRef} style={{display:'flex', alignItems:'center', gap:'1rem'}}>
-            {SKIP_COMMANDS.map((v, i) => (
-              <div key={`skip-commands-${v}-${i}`} style={{display:'flex', alignItems:'center', gap:'1rem'}}>
-                <label htmlFor={`skip-${v}`}>skip {v}</label>
-                <input type="checkbox" id={`skip-${v}`} name={`skip-${v}`}/>
-              </div>
-            ))}
-          </form>
-          <p>text: {text}</p>
-          <p>current suffix: {text.slice(suffix, text.length)}</p>
         </div>
 
-          <Query/>
-          <SuffixTree/>
+        <SuffixTree/>
     </div>
   )
 }

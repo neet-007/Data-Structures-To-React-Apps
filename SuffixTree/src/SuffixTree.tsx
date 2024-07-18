@@ -16,16 +16,16 @@ const SuffixTree:React.FC<ComponentProps<'div'>> = ({...props}) => {
 
     return (
         <div {...props} onClick={(e) => modalOverlayClick(e, setIsOpen)}>
-        <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
+        <div className='flex gap-2-rem align-items-center'>
             <h3>Suffix Tree</h3>
-            <button style={{height:'max-content'}} disabled={command !== 4} onClick={reDrawTree}>redraw tree</button>
-            <button onClick={() => {setIsOpen(true); setCurrTitle('suffix tree')}}>I</button>
-            <button disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true); setCurrTitle('timer')}}>set timer</button>
-            <button onClick={() => setIsHidden(prev => !prev)}>{isHidden ? 'show' : 'hide'}</button>
+            <button className='height-max-content' disabled={command !== 4} onClick={reDrawTree}>redraw tree</button>
+            <button className='height-max-content' disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true); setCurrTitle('timer')}}>set timer</button>
+            <button className='height-max-content' onClick={() => setIsHidden(prev => !prev)}>{isHidden ? 'show' : 'hide'}</button>
+            <button className='height-max-content' onClick={() => {setIsOpen(true); setCurrTitle('suffix tree')}}>I</button>
         </div>
 
         {!isHidden &&
-        <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
+        <div className='height-100 width-100 flex flex-direction-column align-items-center'>
             <Node node={suffixTree[0]} adjustedHeight={0}/>
         </div>
         }

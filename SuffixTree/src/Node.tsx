@@ -116,7 +116,7 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
         return childrenRef.current;
     };
     return (
-        <div ref={nodeRef} style={{display:'flex', flexDirection:'column', alignItems:'center', marginTop:`${adjustedHeight}px`, width:'100%'}} {...props}>
+        <div ref={nodeRef} className='flex flex-direction-column align-items-center width-100' style={{marginTop:`${adjustedHeight}px`}} {...props}>
             <div style={{
                 display:'flex',
                 alignItems:'center',
@@ -159,11 +159,8 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                     return children.map((v, i) => {
                         const key = ALPHABET.indexOf(text[suffixTree[v.index].edgeStart]);
                         return <div key={`node-${node.edgeStart}-child-${i}`}
-                        style={{
-                            height:'100%',
-                            width:'100%',
-                        }}>
-                                <svg style={{position:'absolute', top:0, left:0, width:'100%', height:'100%', zIndex:-1}}>
+                                className='height-100 width-100'>
+                                <svg className='position-absolute top-0 left-0 width-100 height-100 z-index-n-1'>
                                     <line x1={nodeChildrenDimentions[key].x1 !== Infinity ? nodeChildrenDimentions[key].x1 : 0}
                                         y1={nodeChildrenDimentions[key].y1 !== Infinity ? nodeChildrenDimentions[key].y1 : 0}
                                         x2={nodeChildrenDimentions[key].x2 !== Infinity ? nodeChildrenDimentions[key].x2 : 0}

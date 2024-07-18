@@ -149,14 +149,14 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
 
     return (
         <div ref={layoutRef} onClick={(e) => modalOverlayClick(e, setIsOpen)} {...props}>
-            <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
+            <div className='flex gap-2-rem align-items-center'>
                 <h3>LCP Array</h3>
-                <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
-                <button onClick={() => {setIsOpen(true);setCurrTitle('lcp array')}}>I</button>
-                <button disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
-                <button onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
+                <button className='height-max-content' disabled={command !== 4} onClick={handleReCalculate}>recalculate</button>
+                <button className='height-max-content' disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
+                <button className='height-max-content' onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
+                <button className='height-max-content' onClick={() => {setIsOpen(true);setCurrTitle('lcp array')}}>I</button>
             </div>
-            <div style={{display:'flex', gap:'1rem'}}>
+            <div className='flex flex-direction-column'>
                 <p>suffix: {(command === 2 || command === 20) ? text.slice(suffix, text.length).split('').map((v, i) => (
                     <span key={`lcp-arr-suffix-${v}-${i}`} className={lcp === i ? 'heighlited-char': lcp > i ? 'found-char' : ''}>{v}</span>
                 )) : ''}</p>

@@ -217,12 +217,12 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
     };
     return (
         <div ref={layoutRef} onClick={(e) => modalOverlayClick(e, setIsOpen)}>
-            <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
+            <div className='flex gap-2-rem align-items-center'>
                 <h3>Suffix Array</h3>
-                <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
-                <button onClick={() => {setIsOpen(true);setCurrTitle('suffix array')}}>I</button>
-                <button disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
-                <button onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
+                <button className='height-max-content' disabled={command !== 4} onClick={handleReCalculate}>recalculate</button>
+                <button className='height-max-content' disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
+                <button className='height-max-content' onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
+                <button className='height-max-content' onClick={() => {setIsOpen(true);setCurrTitle('suffix array')}}>I</button>
             </div>
             {order[0] !== -1 &&
             <div {...props}>
