@@ -5,13 +5,14 @@ import SuffixArray from './SuffixArray'
 import { useTreeContext } from './TreeContext'
 import Query from './Query';
 import SuffixTree from './SuffixTree';
+import DynamicHeightInput from './DynamicHeightInput';
 
 const SKIP_COMMANDS = ['SA', 'LCP', 'ST'] as const
 
 function App() {
   const {text, command, suffix, ALPHABET, skipCommands:skipCommands_, setText, setCommand, setSuffixArray, setLcpArray, setSuffixTree, setSkipCommands, setALPHABET} = useTreeContext();
-  const InputRef = useRef<HTMLInputElement>(null);
-  const alphabetRef = useRef<HTMLInputElement>(null);
+  const InputRef = useRef<HTMLDivElement>(null);
+  const alphabetRef = useRef<HTMLDivElement>(null);
   const alphabetSortRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -26,8 +27,9 @@ function App() {
     if (!alphabetRef.current || !alphabetSortRef.current){
       return
     };
-    const arr = alphabetRef.current.value.split(',').filter(x => x !== '');
-    if (arr.length !== Math.floor(alphabetRef.current.value.length / 2) + 1){
+    const inputElem = alphabetRef.current.children[1] as HTMLInputElement;
+    const arr = inputElem.value.split(',').filter(x => x !== '');
+    if (arr.length !== Math.floor(inputElem.value.length / 2) + 1){
       alert('there are more commas that there should be');
       return
     };
@@ -43,7 +45,8 @@ function App() {
     if (!InputRef.current || !formRef.current){
       return
     };
-    setText(InputRef.current.value.endsWith('$') ? InputRef.current.value : InputRef.current.value + '$');
+    const inputElem = InputRef.current.children[1] as HTMLInputElement
+    setText(inputElem.value.endsWith('$') ? inputElem.value : inputElem.value + '$');
 
     const skipCommands = Array(SKIP_COMMANDS.length).fill(false);
     for (let i = 0; i < formRef.current!.children.length; i++){
@@ -69,14 +72,12 @@ function App() {
 
         <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
           <div>
-            <label htmlFor="">text</label>
-            <input type="text" ref={InputRef}/>
+            <DynamicHeightInput passedLabel='text' ref={InputRef}/>
             <button disabled={command !== 0 && command !== 4} onClick={handleClickInput}>create</button>
             <button>options</button>
             <div>
               <div>
-                <label htmlFor="">set alphabet</label>
-                <input type="text" placeholder='type each charecter separeted by a coma ,' ref={alphabetRef}/>
+                <DynamicHeightInput passedLabel='set alphabet' passedPlaceHolder='enter the chars separetd by comma ,' ref={alphabetRef}/>
                 <button disabled={command !== 0 && command !== 4} onClick={handleAlphabetSet}>set</button>
                 <button disabled={command !== 0 && command !== 4} onClick={() => setALPHABET(['$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'])}>
                   reset default
