@@ -8,6 +8,7 @@ const SuffixTree:React.FC<ComponentProps<'div'>> = ({...props}) => {
     const {suffixTree, command, setCommand} = useTreeContext();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [currModalTitle, setCurrTitle] = useState<'suffix tree' | 'timer'>('suffix tree');
+    const [isHidden, setIsHidden] = useState<boolean>(false);
 
     function reDrawTree(){
         setCommand(30);
@@ -20,11 +21,14 @@ const SuffixTree:React.FC<ComponentProps<'div'>> = ({...props}) => {
             <button style={{height:'max-content'}} disabled={command !== 4} onClick={reDrawTree}>redraw tree</button>
             <button onClick={() => {setIsOpen(true); setCurrTitle('suffix tree')}}>I</button>
             <button disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true); setCurrTitle('timer')}}>set timer</button>
+            <button onClick={() => setIsHidden(prev => !prev)}>{isHidden ? 'show' : 'hide'}</button>
         </div>
 
+        {!isHidden &&
         <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
             <Node node={suffixTree[0]} adjustedHeight={0}/>
         </div>
+        }
         <Modal isOpen={isOpen} setIsOpen={setIsOpen} title={currModalTitle}/>
         </div>
     )

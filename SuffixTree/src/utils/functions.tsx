@@ -4,3 +4,16 @@ export function modalOverlayClick(e:React.MouseEvent<HTMLDivElement, MouseEvent>
         handler(false);
     };
 };
+
+export function adjustDivHeigthToHeader(div:HTMLDivElement | null, child:HTMLDivElement | null, hidden:boolean){
+    if (!div || !child){
+        return
+    };
+    if (hidden){
+        div.style.height = ``;
+        div.style.overflow = 'visible';
+        return
+    };
+    div.style.height = `${child.offsetHeight}px`;
+    div.style.overflow = 'hidden';
+};

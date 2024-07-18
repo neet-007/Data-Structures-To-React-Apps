@@ -1,7 +1,7 @@
-import React, { ComponentProps, useEffect, useState } from 'react'
+import React, { ComponentProps, useEffect, useRef, useState } from 'react'
 import { useTreeContext } from './TreeContext';
 import Modal from './modal/Modal';
-import { modalOverlayClick } from './utils/functions';
+import { adjustDivHeigthToHeader, modalOverlayClick } from './utils/functions';
 
 interface SuffixArrayProps extends ComponentProps<'div'>{
 
@@ -15,6 +15,13 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
     const [currModalTitle, setCurrTitle] = useState<'suffix array' | 'timer'>('suffix array');
     const [timer, setTimer] = useState<number>(2000);
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [isHidden, setIsHidden] = useState<boolean>(false);
+    const layoutRef = useRef(null);
+
+    function hide(){
+        adjustDivHeigthToHeader(layoutRef.current, layoutRef.current!.children[0], isHidden);
+        setIsHidden(prev => !prev);
+    }
 
     useEffect(() => {
         if (command === -1){
@@ -209,12 +216,13 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
         setCommand(10);
     };
     return (
-        <div onClick={(e) => modalOverlayClick(e, setIsOpen)}>
+        <div ref={layoutRef} onClick={(e) => modalOverlayClick(e, setIsOpen)}>
             <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
                 <h3>Suffix Array</h3>
                 <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
                 <button onClick={() => {setIsOpen(true);setCurrTitle('suffix array')}}>I</button>
                 <button disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
+                <button onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
             </div>
             {order[0] !== -1 &&
             <div {...props}>

@@ -1,7 +1,7 @@
-import React, { ComponentProps, useEffect, useMemo, useState } from 'react'
+import React, { ComponentProps, useEffect, useMemo, useRef, useState } from 'react'
 import { useTreeContext } from './TreeContext';
 import Modal from './modal/Modal';
-import { modalOverlayClick } from './utils/functions';
+import { adjustDivHeigthToHeader, modalOverlayClick } from './utils/functions';
 
 interface LcpArrayProps extends ComponentProps<'div'>{
 
@@ -17,6 +17,8 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     const [currModalTitle, setCurrTitle] = useState<'lcp array' | 'timer'>('lcp array');
     const [timer, setTimer] = useState<number>(2000);
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [isHidden, setIsHidden] = useState<boolean>(false);
+    const layoutRef = useRef<HTMLDivElement>(null);
 
     const inverseOrder = useMemo(() => {
         if (suffixArray.length === 0){
@@ -140,13 +142,19 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
         setCommand(20);
     };
 
+    function hide(){
+        adjustDivHeigthToHeader(layoutRef.current, layoutRef.current!.children[0], isHidden);
+        setIsHidden(prev => !prev);
+    }
+
     return (
-        <div onClick={(e) => modalOverlayClick(e, setIsOpen)} {...props}>
+        <div ref={layoutRef} onClick={(e) => modalOverlayClick(e, setIsOpen)} {...props}>
             <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
                 <h3>LCP Array</h3>
                 <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
                 <button onClick={() => {setIsOpen(true);setCurrTitle('lcp array')}}>I</button>
                 <button disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
+                <button onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
             </div>
             <div style={{display:'flex', gap:'1rem'}}>
                 <p>suffix: {(command === 2 || command === 20) ? text.slice(suffix, text.length).split('').map((v, i) => (
