@@ -146,7 +146,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
                 <h3>LCP Array</h3>
                 <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
                 <button onClick={() => {setIsOpen(true);setCurrTitle('lcp array')}}>I</button>
-                <button onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
+                <button disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
             </div>
             <div style={{display:'flex', gap:'1rem'}}>
                 <p>suffix: {(command === 2 || command === 20) ? text.slice(suffix, text.length).split('').map((v, i) => (

@@ -1,22 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import './App.css'
 import LcpArray from './LcpArray'
 import SuffixArray from './SuffixArray'
-import Node from './Node';
 import { useTreeContext } from './TreeContext'
 import Query from './Query';
-import Modal from './modal/Modal';
-import { modalOverlayClick } from './utils/functions';
+import SuffixTree from './SuffixTree';
 
 const SKIP_COMMANDS = ['SA', 'LCP', 'ST'] as const
 
 function App() {
-  const {text, suffixTree, command, suffix, ALPHABET, skipCommands:skipCommands_, setText, setCommand, setSuffixArray, setLcpArray, setSuffixTree, setSkipCommands, setALPHABET} = useTreeContext();
+  const {text, command, suffix, ALPHABET, skipCommands:skipCommands_, setText, setCommand, setSuffixArray, setLcpArray, setSuffixTree, setSkipCommands, setALPHABET} = useTreeContext();
   const InputRef = useRef<HTMLInputElement>(null);
   const alphabetRef = useRef<HTMLInputElement>(null);
   const alphabetSortRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (command > -1){
@@ -65,12 +62,8 @@ function App() {
     };
   };
 
-  function reDrawTree(){
-    setCommand(30);
-  };
-
   return (
-    <div onClick={(e) => modalOverlayClick(e, setIsOpen)} style={{position:'relative'}}>
+    <div style={{position:'relative'}}>
         <SuffixArray/>
         <LcpArray/>
 
@@ -84,8 +77,8 @@ function App() {
               <div>
                 <label htmlFor="">set alphabet</label>
                 <input type="text" placeholder='type each charecter separeted by a coma ,' ref={alphabetRef}/>
-                <button onClick={handleAlphabetSet}>set</button>
-                <button onClick={() => setALPHABET(['$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'])}>
+                <button disabled={command !== 0 && command !== 4} onClick={handleAlphabetSet}>set</button>
+                <button disabled={command !== 0 && command !== 4} onClick={() => setALPHABET(['$', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'])}>
                   reset default
                 </button>
                   <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
@@ -108,17 +101,7 @@ function App() {
         </div>
 
           <Query/>
-
-      <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
-        <h3>Suffix Tree</h3>
-        <button style={{height:'max-content'}} disabled={command !== 4} onClick={reDrawTree}>redraw tree</button>
-        <button onClick={() => setIsOpen(true)}>I</button>
-      </div>
-
-      <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-        <Node node={suffixTree[0]} adjustedHeight={0}/>
-      </div>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen} title='suffix tree'/>
+          <SuffixTree/>
     </div>
   )
 }

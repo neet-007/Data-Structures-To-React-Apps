@@ -214,7 +214,7 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
                 <h3>Suffix Array</h3>
                 <button disabled={command !== 4} onClick={handleReCalculate} style={{height:'max-content'}}>recalculate</button>
                 <button onClick={() => {setIsOpen(true);setCurrTitle('suffix array')}}>I</button>
-                <button onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
+                <button disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
             </div>
             {order[0] !== -1 &&
             <div {...props}>
