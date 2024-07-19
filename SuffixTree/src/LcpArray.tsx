@@ -94,6 +94,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
             setLcpArrayBefore(lcpArray_);
         }else if (suffix === undefined){
             setSuffix(suffixArray[0]);
+            setLcpArrayBefore(Array(text.length - 1).fill(-1))
         }else if (nextSuffix === -1){
             const currIndex_ = inverseOrder[suffix];
             if (currIndex_ === text.length - 1){
@@ -143,7 +144,11 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     };
 
     function hide(){
-        adjustDivHeigthToHeader(layoutRef.current, layoutRef.current!.children[0], isHidden);
+        if (!layoutRef.current){
+            return
+        };
+        const div = layoutRef.current.children[0] as HTMLDivElement;
+        adjustDivHeigthToHeader(layoutRef.current, div, isHidden);
         setIsHidden(prev => !prev);
     }
 
@@ -166,7 +171,12 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
             </div>
             {lcpArrayBefore.map((v, i) => {
                 return <div key={`lcp-arr-${i}`}>
-                            {v} common prefixes characters between suffixes {i + 1}, {i + 2}
+                            {
+                                v === -1 ?
+                                `pending for common preffixes between ${i + 1}, ${i + 2}`
+                                :
+                                `${v} common preffix between ${i + 1}, ${i + 2}`
+                            }
                        </div>
             })}
             <Modal isOpen={isOpen} setIsOpen={setIsOpen} title={currModalTitle} setTimer={currModalTitle === 'timer' ? setTimer : undefined}/>

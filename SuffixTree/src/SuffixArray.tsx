@@ -16,10 +16,14 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
     const [timer, setTimer] = useState<number>(2000);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isHidden, setIsHidden] = useState<boolean>(false);
-    const layoutRef = useRef(null);
+    const layoutRef = useRef<HTMLDivElement>(null);
 
     function hide(){
-        adjustDivHeigthToHeader(layoutRef.current, layoutRef.current!.children[0], isHidden);
+        if (!layoutRef.current){
+            return
+        };
+        const div = layoutRef.current.children[0] as HTMLDivElement;
+        adjustDivHeigthToHeader(layoutRef.current, div, isHidden);
         setIsHidden(prev => !prev);
     }
 
