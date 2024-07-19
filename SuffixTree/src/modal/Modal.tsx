@@ -28,8 +28,8 @@ const Modal:React.FC<ModalProps> = ({isOpen, setIsOpen, title, setTimer, ...prop
                         <button className='height-max-content invisible-button' onClick={() => setIsOpen(false)}>X</button>
                     </div>
                     {(title === 'timer' && setTimer) ?
-                    <div>
-                        <input type="number" />
+                    <div className='flex gap-2-rem'>
+                        <input type="number" className='b-1-black b-1-radius'/>
                         <button
                             className='button height-max-content'
                             onClick={(e) => {

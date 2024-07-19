@@ -8,6 +8,7 @@
     --clr-secondary: #669bbc;
     --clr-warning: #c1121f;
     --clr-success: #2ec4b6;
+    --clr-disabled: #caf0f8;
 }
 .bg-bg{
     background-color: #fdf0d5;
@@ -40,8 +41,14 @@
 .justify-content-between{
     justify-content: space-between;
 }
+.justify-self-center{
+    justify-self: center;
+}
 .align-items-center{
     align-items: center;
+}
+.align-self-center{
+    align-self: center;
 }
 .gap-1-rem{
     gap: 0.5rem;
@@ -141,9 +148,15 @@
     background-color: var(--clr-primary);
     color: white;
     transition: background-color 200ms ease-in-out;
+    transition: color 200ms ease-in-out;
 }
 .button:hover{
     background-color: var(--clr-secondary);
+}
+.button:disabled{
+    background-color: var(--clr-disabled);
+    color: black;
+    opacity: 50%;
 }
 .heighlited-node{
     background-color: var(--clr-secondary);
