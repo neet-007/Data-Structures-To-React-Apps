@@ -126,7 +126,7 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
                     };
 
                     setOrder(order_);
-                    setLength(l);
+                    setLength(text.length + 1);
             }else{
                 setTimeout(() => {
                     setOrder(prev => {
