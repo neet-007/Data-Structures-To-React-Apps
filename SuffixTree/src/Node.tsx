@@ -7,6 +7,11 @@ const CONVERTE_TO_PX = parseFloat(getComputedStyle(document.documentElement).fon
 
 const GAP = 2;
 
+const CONVERTED_GAP = (GAP * CONVERTE_TO_PX);
+const CONVERTED_GAP_OVER_2 = CONVERTED_GAP / 2;
+const DEG_TO_RAD = 180/Math.PI;
+const RAD_TO_DEG = Math.PI/180;
+
 export type NodeChildrenType = {
     index:number;
     currChar:number;
@@ -39,47 +44,15 @@ interface NodeProps extends ComponentProps<'div'>{
 
 const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, ...props}, ref) => {
     const {text, suffixTree, ALPHABET} = useTreeContext();
-    const [windowDimentions, setWindowDimentions] = useState<{height:number, width:number}>({height:0, width:0});
-    const [windowScroll, setWindowScroll] = useState<{x:number, y:number}>({x:0, y:0});
-    const [nodeChildrenDimentions, setNodeChildrenDimentions] = useState<RectType[]>(Array(ALPHABET.length).fill({x1:Infinity, y1:Infinity, x2:Infinity, y2:Infinity, width:Infinity, height:Infinity, angle:Infinity}));
+    const [nodeChildrenDimentions, setNodeChildrenDimentions] = useState<RectType[]>(Array(ALPHABET.length).fill({x1:0, y1:0, x2:0, y2:0, width:0, height:0, angle:0}));
     const nodeRef = useRef<HTMLDivElement | null>(null);
     const childrenRef = useRef<Map<any, any> | null>(null);
-    const prevDimintions = useRef<{height:number, width:number}>(windowDimentions);
 
     useEffect(() => {
-        function updateWindowDimentions(){
-            setWindowDimentions(prev => {
-                prevDimintions.current = prev;
-                return {height:window.innerHeight, width:window.innerWidth}
-            });
-        };
-
-        window.addEventListener('resize', updateWindowDimentions);
-        updateWindowDimentions();
-
-        return () => window.removeEventListener('resize', updateWindowDimentions);
-    },[]);
-
-    useEffect(() => {
-        function updateWindowScroll(){
-            setWindowScroll(prev => {
-                if (Math.abs(prev.x - window.scrollX) > 100 || Math.abs(prev.y - window.scrollY) > 100){
-                    return {x:window.scrollX, y:window.scrollY};
-                };
-                return prev
-            });
-        };
-
-        window.addEventListener('scroll', updateWindowScroll);
-        updateWindowScroll();
-
-        return () => window.removeEventListener('scroll', updateWindowScroll);
-    },[])
-
-    useEffect(() => {
+        console.log('dsadasd')
         if (nodeRef.current){
             const map = getMap();
-            const arr = Array(ALPHABET.length).fill({x1:Infinity, y1:Infinity, x2:Infinity, y2:Infinity, width:Infinity, height:Infinity, angle:Infinity});
+            const arr = Array(ALPHABET.length).fill({x1:0, y1:0, x2:0, y2:0, width:0, height:0, angle:0});
             const parentRect = nodeRef.current.children[0].getBoundingClientRect();
             map.forEach((val, key) => {
                 if (!val){
@@ -94,20 +67,20 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                     };
                 }else{
                     arr[key] = {
-                        x1:parentRect.x + window.scrollX + parentRect.width - (GAP * CONVERTE_TO_PX) / 2,
-                        y1:parentRect.y + window.scrollY + parentRect.height - (GAP * CONVERTE_TO_PX) / 2,
-                        x2:val.x + window.scrollX + val.width - (GAP * CONVERTE_TO_PX) / 2,
-                        y2:val.y + window.scrollY + val.height - (GAP * CONVERTE_TO_PX) / 2,
+                        x1:parentRect.x + window.scrollX + parentRect.width - CONVERTED_GAP_OVER_2,
+                        y1:parentRect.y + window.scrollY + parentRect.height - CONVERTED_GAP_OVER_2,
+                        x2:val.x + window.scrollX + val.width - CONVERTED_GAP_OVER_2,
+                        y2:val.y + window.scrollY + val.height - CONVERTED_GAP_OVER_2,
                         width:val.width,
                         height:val.height,
-                        angle:Math.atan2((val.y - parentRect.y), (val.x - parentRect.x)) * (180/Math.PI)
+                        angle:Math.atan2((val.y - parentRect.y), (val.x - parentRect.x)) * DEG_TO_RAD
                     };
                 };
             });
 
             setNodeChildrenDimentions(arr);
         };
-    },[windowDimentions.height, windowDimentions.width, windowScroll.x, windowScroll.y, suffixTree.length]);
+    },[suffixTree.length]);
 
     function getMap(){
         if (!childrenRef.current){
@@ -161,18 +134,18 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                         return <div key={`node-${node.edgeStart}-child-${i}`}
                                 className='height-100 width-100'>
                                 <svg className='position-absolute top-0 left-0 width-100 height-100 z-index-n-1'>
-                                    <line x1={nodeChildrenDimentions[key].x1 !== Infinity ? nodeChildrenDimentions[key].x1 : 0}
-                                        y1={nodeChildrenDimentions[key].y1 !== Infinity ? nodeChildrenDimentions[key].y1 : 0}
-                                        x2={nodeChildrenDimentions[key].x2 !== Infinity ? nodeChildrenDimentions[key].x2 : 0}
-                                        y2={nodeChildrenDimentions[key].y2 !== Infinity ? nodeChildrenDimentions[key].y2 : 0}
-                                        height={nodeChildrenDimentions[key].height !== Infinity ? nodeChildrenDimentions[key].height : 0}
-                                        width={nodeChildrenDimentions[key].width !== Infinity ? nodeChildrenDimentions[key].width : 0}
+                                    <line x1={nodeChildrenDimentions[key].x1}
+                                        y1={nodeChildrenDimentions[key].y1}
+                                        x2={nodeChildrenDimentions[key].x2}
+                                        y2={nodeChildrenDimentions[key].y2}
+                                        height={nodeChildrenDimentions[key].height}
+                                        width={nodeChildrenDimentions[key].width}
                                         stroke='black'>
                                     </line>
                                     {text.slice(suffixTree[v.index].edgeStart, suffixTree[v.index].edgeEnd + 1).split('').map((c, idx) => (
                                         <text key={`node-${i}-child-${c}-${idx}`}
-                                        x={nodeChildrenDimentions[key].x1 !== Infinity ? (nodeChildrenDimentions[key].x1 + nodeChildrenDimentions[key].x2 + (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.cos(nodeChildrenDimentions[key].angle * Math.PI / 180)) : 0}
-                                        y={nodeChildrenDimentions[key].y1 !== Infinity ? (nodeChildrenDimentions[key].y1 + nodeChildrenDimentions[key].y2 - (GAP * CONVERTE_TO_PX)) / 2 + (idx * CHARDIST * Math.sin(nodeChildrenDimentions[key].angle * Math.PI / 180)) : 0}
+                                        x={(nodeChildrenDimentions[key].x1 + nodeChildrenDimentions[key].x2 + CONVERTED_GAP) / 2 + (idx * CHARDIST * Math.cos(nodeChildrenDimentions[key].angle * RAD_TO_DEG))}
+                                        y={(nodeChildrenDimentions[key].y1 + nodeChildrenDimentions[key].y2 - CONVERTED_GAP) / 2 + (idx * CHARDIST * Math.sin(nodeChildrenDimentions[key].angle * RAD_TO_DEG))}
                                         textAnchor="middle"
                                         alignmentBaseline="middle"
                                         style={{fontSize:'1.2em'}}
