@@ -20,7 +20,6 @@ const Query:React.FC<QueryProps> = ({...props}) => {
 
         const textarea = queryRef.current.children[1] as HTMLTextAreaElement;
         if (str.length >= text.length - 1){
-            console.log(str.length)
             textarea.maxLength = textarea.textLength;
         }else{
             setState(str);
@@ -33,7 +32,7 @@ const Query:React.FC<QueryProps> = ({...props}) => {
           return
         };
         const inputElem = queryRef.current.children[1] as HTMLTextAreaElement
-        const q = inputElem.value.split('').reduce((prev:QueryType[], curr:string) => {
+        const q = inputElem.value.toLowerCase().replace(/\s+/g, '').split('').reduce((prev:QueryType[], curr:string) => {
             prev.push({char:curr.toLocaleLowerCase(), className:prev.length === 0 ? 'heighlited-char' : ''});
             return prev
         },[]);

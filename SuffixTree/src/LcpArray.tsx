@@ -161,6 +161,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
                 <button className='height-max-content button' onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
                 <button className='height-max-content button thick-i' onClick={() => {setIsOpen(true);setCurrTitle('lcp array')}}>i</button>
             </div>
+            <div>{currIndex} / {text.length > 0 ? text.length: 0}</div>
             <div className='flex flex-direction-column'>
                 <p>suffix: {(command === 2 || command === 20) ? text.slice(suffix, text.length).split('').map((v, i) => (
                     <span key={`lcp-arr-suffix-${v}-${i}`} className={lcp === i ? 'heighlited-char': lcp > i ? 'found-char' : ''}>{v}</span>

@@ -10,12 +10,12 @@ import DynamicHeightInput from './DynamicHeightInput';
 const SKIP_COMMANDS = ['SA', 'LCP', 'ST'] as const
 
 function App() {
-  const {text, command, suffix, ALPHABET, skipCommands:skipCommands_, setText, setCommand, setSuffixArray, setLcpArray, setSuffixTree, setSkipCommands, setALPHABET} = useTreeContext();
+  const {text, command, ALPHABET, skipCommands:skipCommands_, setText, setCommand, setSuffixArray, setLcpArray, setSuffixTree, setSkipCommands, setALPHABET} = useTreeContext();
   const InputRef = useRef<HTMLDivElement>(null);
   const alphabetRef = useRef<HTMLDivElement>(null);
   const alphabetSortRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-
+  console.log(text)
   useEffect(() => {
     if (command > -1){
       return
@@ -74,7 +74,7 @@ function App() {
       return
     };
     const inputElem = InputRef.current.children[1] as HTMLInputElement
-    setText(inputElem.value.endsWith('$') ? inputElem.value : inputElem.value + '$');
+    setText(inputElem.value.endsWith('$') ? inputElem.value.toLowerCase().replace(/\s+/g, '') : inputElem.value.toLowerCase().replace(/\s+/g, '') + '$');
 
     const skipCommands = Array(SKIP_COMMANDS.length).fill(false);
     for (let i = 0; i < formRef.current!.children.length; i++){
@@ -117,7 +117,6 @@ function App() {
                 ))}
                 </form>
                 <div>text: {text}</div>
-                <div>current suffix: {text.slice(suffix, text.length)}</div>
               </div>
               <div>
                   <div className='flex align-items-center gap-2-rem'>

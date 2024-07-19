@@ -5,7 +5,7 @@ import { useTreeContext } from './TreeContext'
 import { modalOverlayClick } from './utils/functions'
 
 const SuffixTree:React.FC<ComponentProps<'div'>> = ({...props}) => {
-    const {suffixTree, command, setCommand} = useTreeContext();
+    const {text, suffix, suffixTree, command, setCommand} = useTreeContext();
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [currModalTitle, setCurrTitle] = useState<'suffix tree' | 'timer'>('suffix tree');
     const [isHidden, setIsHidden] = useState<boolean>(false);
@@ -23,7 +23,7 @@ const SuffixTree:React.FC<ComponentProps<'div'>> = ({...props}) => {
             <button className='height-max-content button' onClick={() => setIsHidden(prev => !prev)}>{isHidden ? 'show' : 'hide'}</button>
             <button className='height-max-content button thick-i' onClick={() => {setIsOpen(true); setCurrTitle('suffix tree')}}>i</button>
         </div>
-
+        <div>current suffix: {text.slice(suffix, text.length)}</div>
         {!isHidden &&
         <div className='height-100 width-100 flex flex-direction-column align-items-center'>
             <Node node={suffixTree[0]} adjustedHeight={0}/>

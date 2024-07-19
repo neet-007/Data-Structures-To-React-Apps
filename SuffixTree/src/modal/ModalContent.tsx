@@ -14,7 +14,7 @@ const ModalContent:React.FC<ComponentProps<'div'> & {passedContent:ContentType[]
                 It is used for efficient substring searching and other string processing tasks.
             </p>
             <div>
-                <div>
+                <div className='modal-content'>
                     <p>
                         {passedContent[page].title}
                     </p>
@@ -22,14 +22,10 @@ const ModalContent:React.FC<ComponentProps<'div'> & {passedContent:ContentType[]
                         {passedContent[page].content}
                     </p>
                 </div>
-                <div className='position-absolute bottom-0 flex gap-2-rem align-items-center' style={{ transform: 'translateY(-50%)' }}>
-                    <p>{page}</p>
-                    {page > 0 &&
-                        <button className='heigth-max-content button' onClick={() => setPage(prev => prev - 1)}>back</button>
-                    }
-                    {page < passedContent.length - 1 &&
-                        <button className='heigth-max-content button' onClick={() => setPage(prev => prev + 1)}>next</button>
-                    }
+                <div className='flex gap-2-rem align-items-center' style={{ transform: 'translateY(-50%)' }}>
+                    <p>page: {page + 1}</p>
+                    <button disabled={page <= 0} className='heigth-max-content button' onClick={() => setPage(prev => prev - 1)}>back</button>
+                    <button disabled={page >= passedContent.length - 1} className='heigth-max-content button' onClick={() => setPage(prev => prev + 1)}>next</button>
                 </div>
             </div>
         </div>
