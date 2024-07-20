@@ -9,7 +9,7 @@ interface QueryProps extends ComponentProps<'div'>{
 }
 
 const Query:React.FC<QueryProps> = ({...props}) => {
-    const {command, text, query, handleQuery} = useTreeContext();
+    const {command, text, query, qResults, handleQuery} = useTreeContext();
 
     const queryRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +49,7 @@ const Query:React.FC<QueryProps> = ({...props}) => {
             <span key={`query-text-${v.char}-${i}`} className={v.className}>{v.char}</span>
             ))}
         </div>
-        <p>results: </p>
+        <p>results: {qResults === undefined ? '' : qResults ? 'found' : 'not found'}</p>
     </div>
     )
 }

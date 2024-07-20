@@ -16,6 +16,7 @@ type TreeContextType = {
     suffix:number;
     command:-1 | 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500 | 1000 | 2000 | 3000 | 5000;
     query:QueryType[];
+    qResults:boolean | undefined,
     skipCommands:boolean[];
     setSuffixArray:React.Dispatch<React.SetStateAction<number[]>>;
     setLcpArray:React.Dispatch<React.SetStateAction<number[]>>;
@@ -25,6 +26,7 @@ type TreeContextType = {
     setCommand:React.Dispatch<React.SetStateAction<-1 | 0 | 1 | 2 | 3 | 4 | 5 | 10 | 20 | 30 | 40 | 50 | 500 | 1000 | 2000 | 3000 | 5000>>;
     setSuffix:React.Dispatch<React.SetStateAction<number>>;
     setQuery:React.Dispatch<React.SetStateAction<QueryType[]>>;
+    setQResults:React.Dispatch<React.SetStateAction<boolean | undefined>>;
     handleQuery:(q:QueryType[]) => void;
     setSkipCommands: React.Dispatch<React.SetStateAction<boolean[]>>;
 };
@@ -37,6 +39,7 @@ const INITIAL_STATE = {
     suffixTree:[],
     suffix:0,
     query:[],
+    qResults:undefined,
     skipCommands:[],
     setSuffixArray:() => {},
     setLcpArray:() => {},
@@ -47,6 +50,7 @@ const INITIAL_STATE = {
     setCommand:() => {},
     setSuffix:() => {},
     setQuery:() => {},
+    setQResults:() => {},
     handleQuery:() => {},
     setSkipCommands:() => {}
 } as TreeContextType;
@@ -94,6 +98,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
     const [currOffset, setCurrOffest] = useState<number>(0);
     const [currQueryIndex, setCurrQueryIndex] = useState<number>(0);
     const [skipCommands, setSkipCommands] = useState<boolean[]>(Array(3).fill(false));
+    const [qResults, setQResults] = useState<boolean | undefined>(undefined);
 
     useEffect(() => {
         if (command !== 3 && command !== 30 && command !== 3000){
@@ -227,6 +232,9 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
                         });
                         setCurrNodeIndex(0);
                         setCurrOffest(0);
+                        setQResults(text.includes(query.reduce((prev:string, curr:QueryType) => {
+                            return prev + curr.char
+                        },'')))
                         setCurrQueryIndex(0);
                         setCommand(4);
                     }else if (currNodeIndex === 0){
@@ -334,6 +342,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
         suffixTree,
         suffix,
         query,
+        qResults,
         setText,
         setSuffixArray,
         setLcpArray,
@@ -344,6 +353,7 @@ export const TreeContextProvider:React.FC<ComponentProps<'div'>> = ({children}) 
         setCommand,
         setSuffix,
         setQuery,
+        setQResults,
         handleQuery,
         skipCommands,
         setSkipCommands
