@@ -94,13 +94,13 @@ function App() {
   };
 
   return (
-    <div className='position-relative p-2-rem'>
-        <div className='flex justify-content-between'>
-          <div>
+    <div className='position-relative p-2-rem flex flex-direction-column gap-5-rem'>
+        <div className='flex flex-row-to-column-at-1070 justify-content-between'>
+          <div className='order1-to-2'>
             <SuffixArray/>
             <LcpArray/>
           </div>
-          <div className='b-1-black b-3-radius p-1-rem'>
+          <div className='order2-to-1 b-1-black b-3-radius p-1-rem bg-blue' style={{color:'white'}}>
             <div className='flex flex-direction-column gap-2-rem'>
               <h1 className='capitalize'>suffix tree visualizer</h1>
               <div>

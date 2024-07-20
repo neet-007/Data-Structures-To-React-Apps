@@ -1,5 +1,6 @@
 import { ComponentProps, forwardRef, useEffect, useRef, useState } from 'react'
 import { useTreeContext } from './TreeContext';
+import { useGetWindowDimentions } from './hooks/useGetWindowDimentions';
 
 const CHARDIST = 30;
 
@@ -47,6 +48,7 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
     const [nodeChildrenDimentions, setNodeChildrenDimentions] = useState<RectType[]>(Array(ALPHABET.length).fill({x1:0, y1:0, x2:0, y2:0, width:0, height:0, angle:0}));
     const nodeRef = useRef<HTMLDivElement | null>(null);
     const childrenRef = useRef<Map<any, any> | null>(null);
+    const windowDimentions = useGetWindowDimentions()
 
     useEffect(() => {
         console.log('dsadasd')
@@ -80,7 +82,7 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
 
             setNodeChildrenDimentions(arr);
         };
-    },[suffixTree.length]);
+    },[suffixTree.length, windowDimentions.height, windowDimentions.width]);
 
     function getMap(){
         if (!childrenRef.current){
