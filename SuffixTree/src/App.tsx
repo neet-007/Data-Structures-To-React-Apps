@@ -102,7 +102,7 @@ function App() {
           </div>
           <div className='order2-to-1 b-1-black b-3-radius p-1-rem bg-blue' style={{color:'white'}}>
             <div className='flex flex-direction-column gap-2-rem'>
-              <h1 className='capitalize'>suffix tree visualizer</h1>
+              <h1 className='capitalize h1'>suffix tree visualizer</h1>
               <div>
                 <div className='flex align-items-center gap-2-rem'>
                   <DynamicHeightInput passedLabel='text' ref={InputRef} onChangeHandler={onChangeHandler}/>
@@ -116,7 +116,7 @@ function App() {
                   </div>
                 ))}
                 </form>
-                <div>text: {text}</div>
+                <div className='h3'>text: {text}</div>
               </div>
               <div>
                   <div className='flex align-items-center gap-2-rem'>

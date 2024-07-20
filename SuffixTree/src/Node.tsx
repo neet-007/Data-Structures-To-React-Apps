@@ -153,7 +153,7 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
                                         style={{fontSize:'1.2em'}}
                                         className={v.currChar === idx ? v.className : ''}
                                         >
-                                            <tspan>{c}</tspan>
+                                            <tspan className='fw-700'>{c}</tspan>
                                         </text>
                                     ))}
                                 </svg>

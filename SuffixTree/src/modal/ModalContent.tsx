@@ -2,7 +2,8 @@ import React, { ComponentProps, useState } from 'react'
 
 export type ContentType = {
     title:string;
-    content:string
+    intro:string;
+    content:string;
 };
 
 const ModalContent:React.FC<ComponentProps<'div'> & {passedContent:ContentType[]}> = ({passedContent, ...props}) => {
@@ -10,12 +11,11 @@ const ModalContent:React.FC<ComponentProps<'div'> & {passedContent:ContentType[]
     return (
         <div {...props}>
             <p>
-                A suffix array is a data structure that lists the starting positions of a string's suffixes in lexicographical order.
-                It is used for efficient substring searching and other string processing tasks.
+                {passedContent[page].intro}
             </p>
-            <div>
-                <div className='modal-content'>
-                    <p>
+            <div className='flex flex-direction-column'>
+                <div>
+                    <p className='h3'>
                         {passedContent[page].title}
                     </p>
                     <p>

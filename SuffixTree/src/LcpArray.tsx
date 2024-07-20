@@ -139,7 +139,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
         setNextSuffix(-1);
         setLcp(0);
         setCurrIndex(1);
-        setLcpArrayBefore([]);
+        setLcpArrayBefore(Array(text.length - 1).fill(-1));
         setCommand(20);
     };
 
@@ -154,8 +154,8 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
 
     return (
         <div ref={layoutRef} onClick={(e) => modalOverlayClick(e, setIsOpen)} {...props}>
-            <div className='flex gap-2-rem align-items-center'>
-                <h3 className='capitalize'>LCP for ordered suffixes</h3>
+            <div className='flex gap-1-rem align-items-center'>
+                <h3 className='capitalize h2' style={{width:'max-content'}}>LCP for ordered suffixes</h3>
                 <button className='height-max-content button' disabled={command !== 4} onClick={handleReCalculate}>recalculate</button>
                 <button className='height-max-content button' disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
                 <button className='height-max-content button' onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
@@ -163,10 +163,10 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
             </div>
             <div>{currIndex > text.length ? 0 : currIndex} / {text.length > 0 ? text.length: 0}</div>
             <div className='flex flex-direction-column'>
-                <p>suffix: {(command === 2 || command === 20) ? text.slice(suffix, text.length).split('').map((v, i) => (
+                <p className='h3'>suffix: {(command === 2 || command === 20) ? text.slice(suffix, text.length).split('').map((v, i) => (
                     <span key={`lcp-arr-suffix-${v}-${i}`} className={lcp === i ? 'heighlited-char': lcp > i ? 'found-char' : ''}>{v}</span>
                 )) : ''}</p>
-                <p>nextSuffix: {nextSuffix > -1 ? text.slice(nextSuffix, text.length).split('').map((v, i) => (
+                <p className='h3'>nextSuffix: {nextSuffix > -1 ? text.slice(nextSuffix, text.length).split('').map((v, i) => (
                     <span key={`lcp-arr-next-suffix-${v}-${i}`} className={lcp === i ? 'heighlited-char' : lcp > i ? 'found-char' : ''}>{v}</span>
                 )) : ''}</p>
             </div>

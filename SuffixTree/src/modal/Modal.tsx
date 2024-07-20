@@ -24,7 +24,7 @@ const Modal:React.FC<ModalProps> = ({isOpen, setIsOpen, title, setTimer, ...prop
                             display:'flex', flexDirection:'column', padding:'1rem', zIndex:'1000'
                         }}>
                     <div className='flex justify-content-between align-items-center'>
-                        <p className='capitalize' style={{textTransform:'capitalize'}}>{title}</p>
+                        <p className='capitalize h3'>{title}</p>
                         <button className='height-max-content invisible-button' style={{fontSize:'1em'}} onClick={() => setIsOpen(false)}>&#10006;</button>
                     </div>
                     {(title === 'timer' && setTimer) ?

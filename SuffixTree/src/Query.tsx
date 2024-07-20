@@ -45,7 +45,7 @@ const Query:React.FC<QueryProps> = ({...props}) => {
             <DynamicHeightInput passedLabel='query' passedPlaceHolder='query should be shorter than the text' ref={queryRef} onChangeHandler={onChangeHandler}/>
             <button className='height-max-content button' disabled={command !== 4} onClick={handleClickQuery}>query</button>
         </div>
-        <div>query: {query.map((v, i) => (
+        <div className='h3'>query: {query.map((v, i) => (
             <span key={`query-text-${v.char}-${i}`} className={v.className}>{v.char}</span>
             ))}
         </div>

@@ -221,8 +221,8 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
     };
     return (
         <div ref={layoutRef} onClick={(e) => modalOverlayClick(e, setIsOpen)}>
-            <div className='flex gap-2-rem align-items-center'>
-                <h3 className='capitalize'>ordered suffixes</h3>
+            <div className='flex gap-1-rem align-items-center'>
+                <h3 className='capitalize h2'>ordered suffixes</h3>
                 <button className='height-max-content button' disabled={command !== 4} onClick={handleReCalculate}>recalculate</button>
                 <button className='height-max-content button' disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
                 <button className='height-max-content button' onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
