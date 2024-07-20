@@ -119,6 +119,9 @@
 .capitalize{
     text-transform: capitalize;
 }
+.white-space-pre{
+    white-space: pre;
+}
 .thick-i{
     font-weight: 900;
     font-size: 1em;

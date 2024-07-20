@@ -10,17 +10,17 @@ const ModalContent:React.FC<ComponentProps<'div'> & {passedContent:ContentType[]
     const [page, setPage] = useState<number>(0);
     return (
         <div {...props}>
-            <p>
+            <div className='white-space-pre'>
                 {passedContent[page].intro}
-            </p>
+            </div>
             <div className='flex flex-direction-column'>
                 <div>
                     <p className='h3'>
                         {passedContent[page].title}
                     </p>
-                    <p>
+                    <div className='white-space-pre'>
                         {passedContent[page].content}
-                    </p>
+                    </div>
                 </div>
                 <div className='flex gap-2-rem align-items-center' style={{ transform: 'translateY(-50%)' }}>
                     <p>page: {page + 1}</p>
