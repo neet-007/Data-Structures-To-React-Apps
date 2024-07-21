@@ -40,6 +40,9 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
             setLcpArrayBefore([]);
             setLcp(0);
             setCurrIndex(1);
+            if (layoutRef.current){
+                layoutRef.current.style.height = '';
+            };
         };
         if (command !== 2 && command !== 20 && command !== 2000){
             return
@@ -135,12 +138,16 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
     },[currIndex, command, suffix, nextSuffix, lcp, inverseOrder.length]);
 
     function handleReCalculate(){
+        if (!layoutRef.current){
+            return
+        };
         setSuffix(suffixArray[0]);
         setNextSuffix(-1);
         setLcp(0);
         setCurrIndex(1);
         setLcpArrayBefore(Array(text.length - 1).fill(-1));
         setCommand(20);
+        layoutRef.current.style.height = `${layoutRef.current.offsetHeight}px`;
     };
 
     function hide(){
@@ -152,6 +159,7 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
         setIsHidden(prev => !prev);
     }
 
+    let lcp_ = lcp < 0 ? 0 : lcp;
     return (
         <div ref={layoutRef} onClick={(e) => modalOverlayClick(e, setIsOpen)} {...props}>
             <div className='flex gap-1-rem align-items-center'>
@@ -159,15 +167,15 @@ const LcpArray:React.FC<LcpArrayProps> = ({...props}) => {
                 <button className='height-max-content button' disabled={command !== 4} onClick={handleReCalculate}>recalculate</button>
                 <button className='height-max-content button' disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
                 <button className='height-max-content button' onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
-                <button className='height-max-content button thick-i' onClick={() => {setIsOpen(true);setCurrTitle('lcp array')}}>i</button>
+                <button className='height-max-content button thick-i text-transformation-none' onClick={() => {setIsOpen(true);setCurrTitle('lcp array')}}>i</button>
             </div>
-            <div>{currIndex > text.length ? 0 : currIndex} / {text.length > 0 ? text.length: 0}</div>
+            <div>{command < 2 ? 0 : currIndex} / {text.length > 0 ? text.length: 0}</div>
             <div className='flex flex-direction-column'>
                 <p className='h3'>suffix: {(command === 2 || command === 20) ? text.slice(suffix, text.length).split('').map((v, i) => (
-                    <span key={`lcp-arr-suffix-${v}-${i}`} className={lcp === i ? 'heighlited-char': lcp > i ? 'found-char' : ''}>{v}</span>
+                    <span key={`lcp-arr-suffix-${v}-${i}`} className={lcp_ === i ? 'heighlited-char': lcp_ > i ? 'found-char' : ''}>{v}</span>
                 )) : ''}</p>
                 <p className='h3'>nextSuffix: {nextSuffix > -1 ? text.slice(nextSuffix, text.length).split('').map((v, i) => (
-                    <span key={`lcp-arr-next-suffix-${v}-${i}`} className={lcp === i ? 'heighlited-char' : lcp > i ? 'found-char' : ''}>{v}</span>
+                    <span key={`lcp-arr-next-suffix-${v}-${i}`} className={lcp_ === i ? 'heighlited-char' : lcp_ > i ? 'found-char' : ''}>{v}</span>
                 )) : ''}</p>
             </div>
             {lcpArrayBefore.map((v, i) => {

@@ -15,7 +15,7 @@ function App() {
   const alphabetRef = useRef<HTMLDivElement>(null);
   const alphabetSortRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  console.log(text)
+
   useEffect(() => {
     if (command > -1){
       return

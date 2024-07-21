@@ -32,6 +32,9 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
             setLength(0);
             setOrder(Array(text.length).fill(0));
             setEqvClasses(Array(text.length).fill(0));
+            if (layoutRef.current){
+                layoutRef.current.style.height = '';
+            };
         };
         if (command !== 1 && command !== 10 && command !== 1000){
             return
@@ -216,8 +219,12 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
     },[length, command])
 
     function handleReCalculate(){
+        if (!layoutRef.current){
+            return
+        };
         setLength(0);
         setCommand(10);
+        layoutRef.current.style.height = `${layoutRef.current.offsetHeight}px`;
     };
     return (
         <div ref={layoutRef} onClick={(e) => modalOverlayClick(e, setIsOpen)}>
@@ -226,7 +233,7 @@ const SuffixArray:React.FC<SuffixArrayProps> = ({...props}) => {
                 <button className='height-max-content button' disabled={command !== 4} onClick={handleReCalculate}>recalculate</button>
                 <button className='height-max-content button' disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true);setCurrTitle('timer')}}>set timer</button>
                 <button className='height-max-content button' onClick={hide}>{isHidden ? 'show' : 'hide'}</button>
-                <button className='height-max-content button thick-i' onClick={() => {setIsOpen(true);setCurrTitle('suffix array')}}>i</button>
+                <button className='height-max-content button thick-i text-transformation-none' onClick={() => {setIsOpen(true);setCurrTitle('suffix array')}}>i</button>
             </div>
             {order[0] !== -1 &&
             <div {...props}>

@@ -21,7 +21,7 @@ const SuffixTree:React.FC<ComponentProps<'div'>> = ({...props}) => {
             <button className='height-max-content button' disabled={command !== 4} onClick={reDrawTree}>redraw tree</button>
             <button className='height-max-content button' disabled={command !== 0 && command !== 4} onClick={() => {setIsOpen(true); setCurrTitle('timer')}}>set timer</button>
             <button className='height-max-content button' onClick={() => setIsHidden(prev => !prev)}>{isHidden ? 'show' : 'hide'}</button>
-            <button className='height-max-content button thick-i' onClick={() => {setIsOpen(true); setCurrTitle('suffix tree')}}>i</button>
+            <button className='height-max-content button thick-i text-transformation-none' onClick={() => {setIsOpen(true); setCurrTitle('suffix tree')}}>i</button>
         </div>
         <div className='h3'>current suffix: {text.slice(suffix, text.length)}</div>
         {!isHidden &&

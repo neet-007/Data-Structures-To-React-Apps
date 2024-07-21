@@ -119,6 +119,9 @@
 .capitalize{
     text-transform: capitalize;
 }
+.text-transformation-none{
+    text-transform: none;
+}
 .white-space-pre{
     white-space: pre;
 }

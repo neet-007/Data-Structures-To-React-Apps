@@ -51,7 +51,6 @@ const NodeTest = forwardRef<HTMLDivElement, NodeProps>(({node, adjustedHeight, .
     const windowDimentions = useGetWindowDimentions()
 
     useEffect(() => {
-        console.log('dsadasd')
         if (nodeRef.current){
             const map = getMap();
             const arr = Array(ALPHABET.length).fill({x1:0, y1:0, x2:0, y2:0, width:0, height:0, angle:0});
